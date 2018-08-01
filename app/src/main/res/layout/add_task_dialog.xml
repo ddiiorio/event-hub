@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:backgroundTint="@android:color/white">
+
+        <TextView
+            android:id="@+id/quickAddTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:textSize="18sp"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:text="@string/quickAddTitle"/>
+
+        <EditText
+            android:id="@+id/newEventTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:maxLength="25"
+            android:lines="1"
+            android:singleLine="true"
+            style="@style/addEventDialog"
+            android:inputType="textCapWords"
+            android:maxLines="1"
+            android:hint="@string/eventTitle" />
+
+        <EditText
+            android:id="@+id/newEventThumb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            style="@style/addEventDialog"
+            android:inputType="textUri"
+            android:hint="@string/imageURL" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="@string/addEventBlurb"
+            style="@style/addEventDialog" />
+
+        <Button
+            android:id="@+id/newEventBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="16dp"
+            style="@style/addEventDialog"
+            android:text="@string/newEventBtn"/>
+
+    </LinearLayout>
+
+</LinearLayout>

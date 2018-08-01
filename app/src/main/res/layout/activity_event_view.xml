@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EventViewActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/content_event_view" />
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        xmlns:fab="http://schemas.android.com/apk/res-auto"
+        android:padding="2dp"
+        android:layout_margin="@dimen/fab_margin">
+
+        <com.github.clans.fab.FloatingActionMenu
+            android:id="@+id/floatingMenu"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            fab:menu_labels_ellipsize="end"
+            fab:menu_labels_singleLine="true"
+            fab:menu_fab_label="Cancel"
+            fab:menu_animationDelayPerItem="0"
+            fab:menu_colorNormal="@color/colorPrimaryDark"
+            fab:menu_colorPressed="@color/colorPrimary"
+            fab:menu_colorRipple="@color/colorPrimary"
+            android:padding="8dp">
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fabAddTicketmaster"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/fab_add"
+                fab:fab_colorNormal="@color/colorPrimary"
+                fab:fab_colorPressed="@color/colorPrimaryDark"
+                fab:menu_colorRipple="@color/colorPrimary"
+                fab:fab_size="mini"
+                fab:fab_label="@string/addTicketmaster"/>
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fabQuickAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/fab_add"
+                fab:fab_colorNormal="@color/colorPrimary"
+                fab:fab_colorPressed="@color/colorPrimaryDark"
+                fab:menu_colorRipple="@color/colorPrimaryDark"
+                fab:fab_size="mini"
+                fab:fab_label="@string/quickAdd"/>
+
+        </com.github.clans.fab.FloatingActionMenu>
+    </FrameLayout>
+</android.support.design.widget.CoordinatorLayout>

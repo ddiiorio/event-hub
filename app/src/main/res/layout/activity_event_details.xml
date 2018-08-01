@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/eventDetailsBackground">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/eventImage"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/login_bg" />
+
+        <ImageView
+            android:id="@+id/backBtn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="top"
+            android:padding="2dp"
+            android:background="@color/eventTitleBackground"
+            android:src="@drawable/ic_arrow_back_white_36dp"/>
+
+        <TextView
+            android:id="@+id/eventTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:textSize="24sp"
+            android:textColor="@android:color/black"
+            android:padding="2dp"
+            android:textStyle="bold"
+            android:text=""
+            android:background="@color/eventTitleBackground"/>
+
+    </FrameLayout>
+
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        card_view:cardElevation="12dp"
+        card_view:cardCornerRadius="1dp"
+        android:layout_margin="8dp"
+        app:cardBackgroundColor="@android:color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/eventDetails"
+                android:textSize="20sp"
+                android:textColor="@android:color/black"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:id="@+id/dateDetails">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_today_black_24dp"/>
+
+                <TextView
+                    android:id="@+id/dateTxt"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/black"
+                    android:gravity="center_vertical"
+                    android:text="" />
+
+                <Button
+                    android:id="@+id/addDateBtn"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:onClick="showDatePickerDialog"
+                    android:text="@string/editDate"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:id="@+id/venueDetails">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="top"
+                    android:src="@drawable/ic_location_on_black_24dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/venueTxt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textColor="@android:color/black"
+                        android:gravity="center_vertical"
+                        android:text="@string/addVenue"/>
+
+                    <TextView
+                        android:id="@+id/venueAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textColor="@android:color/black"
+                        android:layout_marginTop="8dp"
+                        android:text=""/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:id="@+id/ticketDetails">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_directions_black_24dp"/>
+
+                <TextView
+                    android:id="@+id/openMapsText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/black"
+                    android:text="@string/openMaps"/>
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/ticketmasterLogo"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/ticketmaster_blue_png"/>
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>

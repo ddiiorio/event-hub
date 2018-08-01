@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="start"
+    android:layout_margin="@dimen/card_margin"
+    android:elevation="3dp"
+    card_view:cardCornerRadius="@dimen/card_event_radius">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/thumbImg"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/event_image_height"
+            android:focusable="true"
+            android:clickable="true"
+            android:scaleType="fitXY" />
+
+        <LinearLayout
+            android:id="@+id/titleAndCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/thumbImg">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/event_title_padding"
+                    android:paddingRight="@dimen/event_title_padding"
+                    android:paddingTop="@dimen/event_title_padding"
+                    android:textColor="@color/event_title"
+                    android:textSize="@dimen/event_title" />
+
+                <TextView
+                    android:id="@+id/date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/date_padding_bottom"
+                    android:paddingLeft="@dimen/event_title_padding"
+                    android:paddingRight="@dimen/event_title_padding"
+                    android:textSize="@dimen/event_date" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/countdown"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingTop="@dimen/event_title_padding"
+                android:textSize="@dimen/event_date"
+                android:gravity="center_horizontal"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>
