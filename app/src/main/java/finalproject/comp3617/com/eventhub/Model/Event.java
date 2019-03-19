@@ -1,11 +1,11 @@
-package finalproject.comp3617.com.eventhub.Realm;
+package finalproject.comp3617.com.eventhub.Model;
 
-import java.util.Date;
+import java.io.Serializable;
 
-import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Event extends RealmObject {
+public class Event implements Serializable {
+    private static final long serialVersionUID = 1L;
     @PrimaryKey
     private String id;
     private String title;
@@ -13,7 +13,7 @@ public class Event extends RealmObject {
     private String placeId;
     private String venueName;
     private String venueAddress;
-    private Date eventDate;
+    private String eventDate;
 
     public Event() {  }
 
@@ -21,7 +21,7 @@ public class Event extends RealmObject {
         this.id = id;
     }
 
-    public Event(String title, String imgUrl, Date eventDate) {
+    public Event(String title, String imgUrl, String eventDate) {
         this.title = title;
         this.imgUrl = imgUrl;
         this.eventDate = eventDate;
@@ -75,11 +75,11 @@ public class Event extends RealmObject {
         this.venueAddress = venueAddress;
     }
 
-    public Date getEventDate() {
+    public String getEventDate() {
         return eventDate;
     }
 
-    public void setEventDate(Date eventDate) {
+    public void setEventDate(String eventDate) {
         this.eventDate = eventDate;
     }
 }

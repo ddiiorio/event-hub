@@ -1,24 +1,20 @@
 package finalproject.comp3617.com.eventhub;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,27 +22,23 @@ import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
-import java.util.Date;
-import java.util.UUID;
+import java.util.ArrayList;
 
-import finalproject.comp3617.com.eventhub.Realm.Event;
-import io.realm.OrderedCollectionChangeSet;
-import io.realm.OrderedRealmCollectionChangeListener;
-import io.realm.Realm;
-import io.realm.RealmResults;
-import io.realm.Sort;
-import io.realm.SyncConfiguration;
-import io.realm.SyncUser;
+import finalproject.comp3617.com.eventhub.Model.Event;
 
 public class EventViewActivity extends AppCompatActivity {
     private static final String TAG = "LOGTAG";
-    private static final String REALM_BASE_URL = "eventbuddy.us1.cloud.realm.io";
     private static final String FLAG = "FLAG";
     protected RecyclerView recyclerView;
     private RecyclerView.Adapter myAdapter;
-    private Realm realmDb;
-    private RealmResults<Event> events;
+    private ArrayList<Event> events;
+    protected DatabaseReference db;
     private EditText newEventTitle, newEventThumb;
 
     @Override
@@ -62,52 +54,54 @@ public class EventViewActivity extends AppCompatActivity {
         final Snackbar snackBar = Snackbar.make(findViewById(android.R.id.content),
                 swipeMessage, Snackbar.LENGTH_INDEFINITE);
         if (fromSignIn.equals(FLAG)) {
-            snackBar.setAction("GOT IT!", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            snackBar.dismiss();
-                        }
-                    });
+            snackBar.setAction("GOT IT!", v -> snackBar.dismiss());
             snackBar.show();
         }
 
-        final FloatingActionMenu fabMenu = findViewById(R.id.floatingMenu);
-        FloatingActionButton fabQuickAdd = findViewById(R.id.fabQuickAdd);
-        fabQuickAdd.setOnClickListener(new View.OnClickListener() {
+        setupFab();
+
+        db = App.Constants.database.child("events");
+        db.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View view) {
-                fabMenu.close(true);
-                addEventDialog();
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                events = new ArrayList<>();
+                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
+                {
+                    Event event = dataSnapshot1.getValue(Event.class);
+                    events.add(event);
+                }
+                myAdapter = new EventAdapter(EventViewActivity.this,events);
+                recyclerView.setAdapter(myAdapter);
             }
-        });
-        FloatingActionButton fabTicketmaster = findViewById(R.id.fabAddTicketmaster);
-        fabTicketmaster.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(View v) {
-                fabMenu.close(true);
-                Intent i = new Intent(v.getContext(), EventSearchActivity.class);
-                v.getContext().startActivity(i);
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(EventViewActivity.this, "Oops.... Something is wrong", Toast.LENGTH_SHORT).show();
             }
         });
 
-        events = setUpRealm();
         recyclerView = findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2,
                 dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        refreshList();
-        events.addChangeListener(new OrderedRealmCollectionChangeListener<RealmResults<Event>>() {
-            @Override
-            public void onChange(@NonNull RealmResults<Event> events,
-                                 @NonNull OrderedCollectionChangeSet changeSet) {
-                myAdapter.notifyDataSetChanged();
-                refreshList();
-                Log.d(TAG, "DataSetChanged");
-            }
+
+    }
+
+    protected void setupFab() {
+        final FloatingActionMenu fabMenu = findViewById(R.id.floatingMenu);
+        FloatingActionButton fabQuickAdd = findViewById(R.id.fabQuickAdd);
+        fabQuickAdd.setOnClickListener(view -> {
+            fabMenu.close(true);
+            addEventDialog();
         });
-        setUpItemTouchHelper();
+        FloatingActionButton fabTicketmaster = findViewById(R.id.fabAddTicketmaster);
+        fabTicketmaster.setOnClickListener(v -> {
+            fabMenu.close(true);
+            Intent i = new Intent(v.getContext(), EventSearchActivity.class);
+            v.getContext().startActivity(i);
+        });
     }
 
     @Override
@@ -122,30 +116,31 @@ public class EventViewActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.signOut:
-                SyncUser syncUser = SyncUser.current();
-                if (syncUser != null) {
-                    syncUser.logOut();
-                    Intent i = new Intent(this, SignInActivity.class);
-                    startActivity(i);
-                    finish();
-                }
+//                SyncUser syncUser = SyncUser.current();
+//                if (syncUser != null) {
+//                    syncUser.logOut();
+//                    Intent i = new Intent(this, SignInActivity.class);
+//                    startActivity(i);
+//                    finish();
+//                }
+                logout();
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        refreshList();
-    }
+//    @Override
+//    public void onWindowFocusChanged(boolean hasFocus) {
+//        super.onWindowFocusChanged(hasFocus);
+//        refreshList();
+//    }
 
-    protected void refreshList() {
-        myAdapter = new EventAdapter(realmDb.where(Event.class)
-                .sort("eventDate", Sort.ASCENDING)
-                .findAllAsync(),true,events);
-        recyclerView.setAdapter(myAdapter);
-    }
+//    protected void refreshList() {
+//        myAdapter = new EventAdapter(realmDb.where(Event.class)
+//                .sort("eventDate", Sort.ASCENDING)
+//                .findAllAsync(),true,events);
+//        recyclerView.setAdapter(myAdapter);
+//    }
 
     private void addEventDialog() {
         final Dialog dialog = new Dialog(this);
@@ -156,33 +151,30 @@ public class EventViewActivity extends AppCompatActivity {
         newEventThumb = dialog.findViewById(R.id.newEventThumb);
         newEventTitle.requestFocus();
 
-        newEventBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String errorMsg = getResources().getString(R.string.newEventError);
-                String title = newEventTitle.getText().toString();
-                String url = newEventThumb.getText().toString();
+        newEventBtn.setOnClickListener(v -> {
+            String errorMsg = getResources().getString(R.string.newEventError);
+            String title = newEventTitle.getText().toString();
+            String url = newEventThumb.getText().toString();
 
-                if (title.length() > 0) {
-                    Event event = new Event();
-                    event.setId(UUID.randomUUID().toString());
-                    event.setTitle(title);
-                    event.setEventDate(new Date());
-                    event.setImgUrl(url);
-                    realmDb.beginTransaction();
-                    realmDb.copyToRealmOrUpdate(event);
-                    realmDb.commitTransaction();
-                    newEventTitle.setText("");
-                    newEventThumb.setText("");
-                    refreshList();
-                    dialog.dismiss();
-                    String eventAddConfirm = getResources().getString(R.string.eventAddConfirm);
-                    Snackbar.make(findViewById(android.R.id.content),
-                            eventAddConfirm, Snackbar.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(EventViewActivity.this,
-                            errorMsg, Toast.LENGTH_LONG).show();
-                }
+            if (title.length() > 0) {
+//                Event event = new Event();
+//                event.setId(UUID.randomUUID().toString());
+//                event.setTitle(title);
+//                event.setEventDate(new Date());
+//                event.setImgUrl(url);
+//                realmDb.beginTransaction();
+//                realmDb.copyToRealmOrUpdate(event);
+//                realmDb.commitTransaction();
+//                newEventTitle.setText("");
+//                newEventThumb.setText("");
+//                refreshList();
+                dialog.dismiss();
+                String eventAddConfirm = getResources().getString(R.string.eventAddConfirm);
+                Snackbar.make(findViewById(android.R.id.content),
+                        eventAddConfirm, Snackbar.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(EventViewActivity.this,
+                        errorMsg, Toast.LENGTH_LONG).show();
             }
         });
         dialog.show();
@@ -191,64 +183,57 @@ public class EventViewActivity extends AppCompatActivity {
                 GridLayoutManager.LayoutParams.WRAP_CONTENT);
     }
 
-    private RealmResults<Event> setUpRealm() {
-        SyncConfiguration configuration = SyncUser.current()
-                .createConfiguration(REALM_BASE_URL + "/eventhub")
-                .build();
-        realmDb = Realm.getInstance(configuration);
+//    private RealmResults<Event> setUpRealm() {
+//        SyncConfiguration configuration = SyncUser.current()
+//                .createConfiguration(REALM_BASE_URL + "/eventhub")
+//                .build();
+//        realmDb = Realm.getInstance(configuration);
+//
+//        return realmDb
+//                .where(Event.class)
+//                .sort("eventDate", Sort.ASCENDING)
+//                .findAllAsync();
+//    }
 
-        return realmDb
-                .where(Event.class)
-                .sort("eventDate", Sort.ASCENDING)
-                .findAllAsync();
-    }
-
-    private void setUpItemTouchHelper() {
-        ItemTouchHelper.SimpleCallback simpleCallback =
-                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView,
-                                  RecyclerView.ViewHolder viewHolder,
-                                  RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
-                final int position = viewHolder.getAdapterPosition();
-
-                if (direction == ItemTouchHelper.LEFT) {
-                    AlertDialog.Builder builder =
-                            new AlertDialog.Builder(EventViewActivity.this);
-                    builder.setMessage(getText(R.string.deleteDialog));
-                    builder.setTitle(R.string.deleteEventTitle);
-                    builder.setIcon(R.drawable.ic_warning_black_24dp);
-
-                    builder.setPositiveButton(getText(R.string.remove),
-                            new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            //code to delete event
-                            Event remove = events.get(position);
-                            realmDb.beginTransaction();
-                            remove.deleteFromRealm();
-                            realmDb.commitTransaction();
-                            dialog.dismiss();
-                            refreshList();
-                        }
-                    }).setNegativeButton(getText(android.R.string.cancel),
-                            new DialogInterface.OnClickListener() {  //not removing items if cancel is done
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    }).show();
-                }
-            }
-        };
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
-    }
+//    private void setUpItemTouchHelper() {
+//        ItemTouchHelper.SimpleCallback simpleCallback =
+//                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+//            @Override
+//            public boolean onMove(RecyclerView recyclerView,
+//                                  RecyclerView.ViewHolder viewHolder,
+//                                  RecyclerView.ViewHolder target) {
+//                return false;
+//            }
+//
+//            @Override
+//            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
+//                final int position = viewHolder.getAdapterPosition();
+//
+//                if (direction == ItemTouchHelper.LEFT) {
+//                    AlertDialog.Builder builder =
+//                            new AlertDialog.Builder(EventViewActivity.this);
+//                    builder.setMessage(getText(R.string.deleteDialog));
+//                    builder.setTitle(R.string.deleteEventTitle);
+//                    builder.setIcon(R.drawable.ic_warning_black_24dp);
+//
+//                    //not removing items if cancel is done
+//                    builder.setPositiveButton(getText(R.string.remove),
+//                            (dialog, which) -> {
+//                                //code to delete event
+//                                Event remove = events.get(position);
+//                                realmDb.beginTransaction();
+//                                remove.deleteFromRealm();
+//                                realmDb.commitTransaction();
+//                                dialog.dismiss();
+//                                refreshList();
+//                            }).setNegativeButton(getText(android.R.string.cancel),
+//                            (dialog, which) -> dialog.dismiss()).show();
+//                }
+//            }
+//        };
+//        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+//        itemTouchHelper.attachToRecyclerView(recyclerView);
+//    }
 
     public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
         private int spanCount;
@@ -272,13 +257,19 @@ public class EventViewActivity extends AppCompatActivity {
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
         super.onDestroy();
-        realmDb.close();
     }
 
     @Override
     protected void onRestart() {
         Log.d(TAG, "onRestart");
         super.onRestart();
-        realmDb.refresh();
+    }
+
+    private void logout() {
+        FirebaseAuth.getInstance().signOut();
+        App.Constants.mGoogleSignInClient.signOut();
+        Intent intent = new Intent(this, SignInActivity.class);
+        finish();
+        startActivity(intent);
     }
 }

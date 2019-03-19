@@ -28,13 +28,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import io.realm.Realm;
-import io.realm.SyncConfiguration;
-import io.realm.SyncUser;
-
 public class EventSearchActivity extends AppCompatActivity {
     private static final String tmApiKey = "WMqw4xi5StCjkwj6c1ifQnxlmVuBGxDw";
-    private static final String REALM_BASE_URL = "eventbuddy.us1.cloud.realm.io";
     private EditText citySearch;
     private TextView resultTitle0, resultVenue0, resultDate0;
     private TextView resultTitle1, resultVenue1, resultDate1;
@@ -42,7 +37,6 @@ public class EventSearchActivity extends AppCompatActivity {
     private View line0, line1;
     private String city, keyword;
     private DiscoveryApi discoveryApi;
-    private Realm realmDb;
     private Event event0, event1, event2;
     private ProgressDialog progDailog;
     private LinearLayout result0, result1, result2;
@@ -55,7 +49,6 @@ public class EventSearchActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        setUpRealm();
         discoveryApi = new DiscoveryApi(tmApiKey);
         citySearch = findViewById(R.id.citySearch);
         final SearchView keywordSearch = findViewById(R.id.keywordSearch);
@@ -95,28 +88,19 @@ public class EventSearchActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) { return false; }
         });
-        result0.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (event0 != null) {
-                    addEventDialog(event0);
-                }
+        result0.setOnClickListener(v -> {
+            if (event0 != null) {
+                addEventDialog(event0);
             }
         });
-        result1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (event0 != null) {
-                    addEventDialog(event1);
-                }
+        result1.setOnClickListener(v -> {
+            if (event0 != null) {
+                addEventDialog(event1);
             }
         });
-        result2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (event0 != null) {
-                    addEventDialog(event2);
-                }
+        result2.setOnClickListener(v -> {
+            if (event0 != null) {
+                addEventDialog(event2);
             }
         });
     }
@@ -222,12 +206,12 @@ public class EventSearchActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //code to add event
-                finalproject.comp3617.com.eventhub.Realm.Event event =
-                        new finalproject.comp3617.com.eventhub.Realm.Event();
+                finalproject.comp3617.com.eventhub.Model.Event event =
+                        new finalproject.comp3617.com.eventhub.Model.Event();
                 event.setId(UUID.randomUUID().toString());
                 event.setTitle(e.getName());
                 String date = e.getDates().getStart().getLocalDate();
-                event.setEventDate(parseDate(date));
+                event.setEventDate(String.valueOf(System.currentTimeMillis())); //TODO: change back to parse(date)
                 event.setImgUrl(e.getImages().get(0).getUrl());
                 event.setVenueName(e.getVenues().get(0).getName());
                 String addy1 = e.getVenues().get(0).getAddress().getLine1();
@@ -237,18 +221,12 @@ public class EventSearchActivity extends AppCompatActivity {
                 } else {
                     event.setVenueAddress(addy1);
                 }
-                realmDb.beginTransaction();
-                realmDb.copyToRealmOrUpdate(event);
-                realmDb.commitTransaction();
+
                 dialog.dismiss();
                 finish();
             }
-        }).setNegativeButton(getText(android.R.string.cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        }).show();
+        }).setNegativeButton(getText(android.R.string.cancel),
+                (dialog, which) -> dialog.dismiss()).show();
     }
 
     private static java.util.Date parseDate(String date) {
@@ -257,13 +235,6 @@ public class EventSearchActivity extends AppCompatActivity {
         } catch (ParseException e) {
             return null;
         }
-    }
-
-    private void setUpRealm() {
-        SyncConfiguration configuration = SyncUser.current()
-                .createConfiguration(REALM_BASE_URL + "/eventhub")
-                .build();
-        realmDb = Realm.getInstance(configuration);
     }
 
     @Override

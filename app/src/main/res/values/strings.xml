@@ -37,4 +37,8 @@
     <string name="eventAddConfirm">Event saved successfully</string>
     <string name="imageURL">Event image URL</string>
     <string name="errorSignIn">Enter a value</string>
+
+    <!-- ImageView descriptions -->
+    <string name="signInBgDescription">Sign in page background image</string>
+    <string name="ticketmasterDescription">Ticketmaster logo</string>
 </resources>
