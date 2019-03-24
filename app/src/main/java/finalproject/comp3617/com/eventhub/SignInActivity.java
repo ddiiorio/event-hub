@@ -16,7 +16,6 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import finalproject.comp3617.com.eventhub.Firebase.FirebaseClient;
@@ -52,8 +51,9 @@ public class SignInActivity extends AppCompatActivity {
         super.onStart();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
+            App.Constants.currentUser = mAuth.getCurrentUser();
             Intent intent = new Intent(this, EventViewActivity.class);
-            intent.putExtra("signIn", FLAG);
+//            intent.putExtra("signIn", FLAG);
             finish();
             startActivity(intent);
         }
@@ -96,7 +96,7 @@ public class SignInActivity extends AppCompatActivity {
                         progressBar.setVisibility(View.INVISIBLE);
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithCredential:success");
-                        FirebaseUser user = mAuth.getCurrentUser();
+                        App.Constants.currentUser = mAuth.getCurrentUser();
                         Intent intent = new Intent(getBaseContext(), EventViewActivity.class);
                         intent.putExtra("signIn", FLAG);
                         finish();

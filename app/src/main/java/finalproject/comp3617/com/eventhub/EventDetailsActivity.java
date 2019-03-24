@@ -25,22 +25,31 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.firebase.database.DatabaseReference;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import finalproject.comp3617.com.eventhub.Model.Event;
+
+import static finalproject.comp3617.com.eventhub.App.Constants.eventsAll;
+import static finalproject.comp3617.com.eventhub.App.Constants.eventsUser;
 
 public class EventDetailsActivity extends AppCompatActivity {
     private static final int PLACE_PICKER_REQUEST = 1;
     private static final String TAG = "LOGTAG";
     private static final double LAT = 49.316054;
     private static final double LON = -123.026416;
-    private TextView eventDate, eventVenue, venueAddress, eventTitle;
-    private String id = null, imageUrl;
+    private TextView eventVenue;
+    private TextView venueAddress;
+    private TextView eventTitle;
+    private TextView eventDate;
+    private TextView openMapsText;
+    private ImageView eventImage, backBtn;
+    private String id = null;
     protected GeoDataClient mGeoDataClient;
     protected DatabaseReference db;
     protected Event current;
+    protected int currentIndex;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,26 +58,29 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         mGeoDataClient = Places.getGeoDataClient(this, null);
 
-        ImageView eventImage = findViewById(R.id.eventImage);
+        eventImage = findViewById(R.id.eventImage);
         eventTitle = findViewById(R.id.eventTitle);
         eventDate = findViewById(R.id.dateTxt);
         eventVenue = findViewById(R.id.venueTxt);
         venueAddress = findViewById(R.id.venueAddress);
-        ImageView backBtn = findViewById(R.id.backBtn);
-        TextView openMapsText = findViewById(R.id.openMapsText);
+        backBtn = findViewById(R.id.backBtn);
+        openMapsText = findViewById(R.id.openMapsText);
         db = App.Constants.database.child("events");
 
+        getIntentData();
+        setupListeners();
+    }
+
+    private void getIntentData() {
         Intent intent = getIntent();
         if (intent != null) {
             if (intent.getStringExtra("id") != null) {
                 id = intent.getStringExtra("id");
-                eventTitle.setText(intent.getStringExtra("title"));
-                String dateTemp = intent.getStringExtra("date");
-                if (dateTemp != null) {
-                    eventDate.setText(dateTemp);
-                }
-                imageUrl = intent.getStringExtra("image");
-                ImageHelper.loadImage(imageUrl, eventImage);
+                current = App.Constants.eventsAll.get(id);
+                currentIndex = eventsUser.indexOf(current);
+                eventTitle.setText(current.getTitle());
+                eventDate.setText(current.getEventDate());
+                ImageHelper.loadImage(current.getImgUrl(), eventImage);
                 String placeId = intent.getStringExtra("placeId");
                 if (placeId != null) {
                     mGeoDataClient.getPlaceById(placeId)
@@ -93,7 +105,9 @@ public class EventDetailsActivity extends AppCompatActivity {
                 }
             }
         }
+    }
 
+    private void setupListeners() {
         eventVenue.setOnClickListener(v -> {
             LatLng neCorner = new LatLng(LAT, LON); //49.316054, -123.026416
             LatLng swCorner = new LatLng(LAT-0.0976, LON-0.1888);
@@ -119,7 +133,9 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         backBtn.setOnClickListener(v -> finish());
         openMapsText.setOnClickListener(v -> launchGoogleMaps());
+        eventDate.setOnClickListener(this::showDatePickerDialog);
     }
+
 
     private void launchGoogleMaps() {
         String venue = eventVenue.getText().toString();
@@ -139,8 +155,9 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     public void saveSelectedDate(Date d) {
         String dateString = App.Constants.df.format(d);
-        db.child(id).child("eventDate").setValue(dateString);
-        db.child(id).child("eventDateMillis").setValue(d.getTime());
+        current.setEventDate(dateString);
+        current.setEventDateMillis(d.getTime());
+        saveEvent();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -149,25 +166,24 @@ public class EventDetailsActivity extends AppCompatActivity {
                 final Place place = PlacePicker.getPlace(data, this);
                 eventVenue.setText(place.getName());
                 venueAddress.setText(place.getAddress());
-//                realmDb.executeTransaction(new Realm.Transaction() {
-//                    @Override
-//                    public void execute(Realm realm) {
-//                        Event temp = realm.where(Event.class).equalTo("id", id)
-//                                .findFirstAsync();
-//                        if (temp != null) {
-//                            temp.setPlaceId(place.getId());
-//                            temp.setImgUrl(imageUrl);
-//                            temp.setTitle(eventTitle.getText().toString());
-//                            temp.setEventDate(parseDate(eventDate.getText().toString()));
-//                        }
-//                        realmDb.copyToRealmOrUpdate(temp);
-//                    }
-//                });
+                current.setPlaceId(place.getId());
+                current.setVenueAddress(String.valueOf(place.getAddress()));
+                current.setVenueName(String.valueOf(place.getName()));
+                saveEvent();
                 String venueConfirm = getResources().getString(R.string.venueConfirm);
                 Snackbar.make(findViewById(android.R.id.content),
                         venueConfirm, Snackbar.LENGTH_LONG).show();
             }
         }
+    }
+
+    protected void saveEvent() {
+        Log.d(TAG, String.valueOf(eventsUser.indexOf(current)));
+        eventsUser.set(currentIndex, current);
+        eventsAll.put(id, current);
+        Map<String, Object> update = new HashMap<>();
+        update.put(current.getId(), current);
+        db.updateChildren(update);
     }
 
     public void showDatePickerDialog(View v) {
@@ -178,13 +194,5 @@ public class EventDetailsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-    }
-
-    private static Date parseDate(String date) {
-        try {
-            return new SimpleDateFormat("EEE, d MMM yyyy").parse(date);
-        } catch (ParseException e) {
-            return null;
-        }
     }
 }

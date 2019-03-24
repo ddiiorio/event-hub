@@ -1,9 +1,11 @@
 package finalproject.comp3617.com.eventhub;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -15,9 +17,11 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -33,15 +37,19 @@ import java.util.ArrayList;
 
 import finalproject.comp3617.com.eventhub.Model.Event;
 
+import static finalproject.comp3617.com.eventhub.App.Constants.eventsUser;
+import static finalproject.comp3617.com.eventhub.App.Constants.eventsAll;
+
 public class EventViewActivity extends AppCompatActivity {
     private static final String TAG = "LOGTAG";
     private static final String FLAG = "FLAG";
     protected RecyclerView recyclerView;
     private RecyclerView.Adapter myAdapter;
-    private ArrayList<Event> events;
-    protected DatabaseReference db;
+    protected DatabaseReference dbEvents;
+    protected DatabaseReference dbUserEvents;
     private Query dataQuery;
     private EditText newEventTitle, newEventThumb;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,40 +57,11 @@ public class EventViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_view);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        progressBar = findViewById(R.id.progressCircular);
+        App.Constants.vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
-        Intent intent = getIntent();
-        String fromSignIn = intent.getStringExtra("signIn");
-        String swipeMessage = getResources().getString(R.string.swipeMessage);
-        final Snackbar snackBar = Snackbar.make(findViewById(android.R.id.content),
-                swipeMessage, Snackbar.LENGTH_INDEFINITE);
-        if (fromSignIn.equals(FLAG)) {
-            snackBar.setAction("GOT IT!", v -> snackBar.dismiss());
-            snackBar.show();
-        }
-
+        setupFirebaseEvents();
         setupFab();
-
-        db = App.Constants.database.child("events");
-        dataQuery = db.orderByChild("eventDateMillis");
-        dataQuery.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                events = new ArrayList<>();
-                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
-                {
-                    Event event = dataSnapshot1.getValue(Event.class);
-                    events.add(event);
-                }
-                myAdapter = new EventAdapter(EventViewActivity.this,events);
-                recyclerView.setAdapter(myAdapter);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(EventViewActivity.this,
-                        "Oops.... Something is wrong", Toast.LENGTH_SHORT).show();
-            }
-        });
 
         recyclerView = findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
@@ -90,7 +69,45 @@ public class EventViewActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2,
                 dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+    }
 
+    private void setupFirebaseEvents() {
+        progressBar.setVisibility(View.VISIBLE);
+        dbEvents = App.Constants.database.child("events");
+        dataQuery = dbEvents.orderByChild("eventDateMillis");
+        dbUserEvents = App.Constants.database.child("users/")
+                .child(App.Constants.currentUser.getUid()).child("events");
+
+        dataQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
+                {
+                    Event event = dataSnapshot1.getValue(Event.class);
+                    eventsAll.put(event.getId(), event);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+
+        dbUserEvents.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                eventsUser = new ArrayList<>();
+                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
+                {
+                    eventsUser.add(eventsAll.get(dataSnapshot1.getKey()));
+                }
+                progressBar.setVisibility(View.INVISIBLE);
+                myAdapter = new EventAdapter(EventViewActivity.this, eventsUser);
+                recyclerView.setAdapter(myAdapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
     }
 
     protected void setupFab() {
@@ -126,18 +143,10 @@ public class EventViewActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    public void onWindowFocusChanged(boolean hasFocus) {
-//        super.onWindowFocusChanged(hasFocus);
-//        refreshList();
-//    }
-
-//    protected void refreshList() {
-//        myAdapter = new EventAdapter(realmDb.where(Event.class)
-//                .sort("eventDate", Sort.ASCENDING)
-//                .findAllAsync(),true,events);
-//        recyclerView.setAdapter(myAdapter);
-//    }
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+    }
 
     private void addEventDialog() {
         final Dialog dialog = new Dialog(this);
@@ -180,46 +189,6 @@ public class EventViewActivity extends AppCompatActivity {
                 GridLayoutManager.LayoutParams.WRAP_CONTENT);
     }
 
-//    private void setUpItemTouchHelper() {
-//        ItemTouchHelper.SimpleCallback simpleCallback =
-//                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-//            @Override
-//            public boolean onMove(RecyclerView recyclerView,
-//                                  RecyclerView.ViewHolder viewHolder,
-//                                  RecyclerView.ViewHolder target) {
-//                return false;
-//            }
-//
-//            @Override
-//            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
-//                final int position = viewHolder.getAdapterPosition();
-//
-//                if (direction == ItemTouchHelper.LEFT) {
-//                    AlertDialog.Builder builder =
-//                            new AlertDialog.Builder(EventViewActivity.this);
-//                    builder.setMessage(getText(R.string.deleteDialog));
-//                    builder.setTitle(R.string.deleteEventTitle);
-//                    builder.setIcon(R.drawable.ic_warning_black_24dp);
-//
-//                    //not removing items if cancel is done
-//                    builder.setPositiveButton(getText(R.string.remove),
-//                            (dialog, which) -> {
-//                                //code to delete event
-//                                Event remove = events.get(position);
-//                                realmDb.beginTransaction();
-//                                remove.deleteFromRealm();
-//                                realmDb.commitTransaction();
-//                                dialog.dismiss();
-//                                refreshList();
-//                            }).setNegativeButton(getText(android.R.string.cancel),
-//                            (dialog, which) -> dialog.dismiss()).show();
-//                }
-//            }
-//        };
-//        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
-//        itemTouchHelper.attachToRecyclerView(recyclerView);
-//    }
-
     public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
         private int spanCount;
         private int spacing;
@@ -248,6 +217,7 @@ public class EventViewActivity extends AppCompatActivity {
     protected void onRestart() {
         Log.d(TAG, "onRestart");
         super.onRestart();
+        myAdapter.notifyDataSetChanged();
     }
 
     private void logout() {

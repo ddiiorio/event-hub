@@ -1,6 +1,7 @@
 package finalproject.comp3617.com.eventhub.Model;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import io.realm.annotations.PrimaryKey;
 
@@ -26,6 +27,26 @@ public class Event implements Serializable {
         this.title = title;
         this.imgUrl = imgUrl;
         this.eventDate = eventDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Event event = (Event) o;
+        return eventDateMillis == event.eventDateMillis &&
+                Objects.equals(title, event.title) &&
+                Objects.equals(imgUrl, event.imgUrl) &&
+                Objects.equals(placeId, event.placeId) &&
+                Objects.equals(venueName, event.venueName) &&
+                Objects.equals(venueAddress, event.venueAddress) &&
+                Objects.equals(eventDate, event.eventDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, imgUrl, placeId, venueName,
+                venueAddress, eventDate, eventDateMillis);
     }
 
     public String getId() {

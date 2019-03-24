@@ -1,6 +1,7 @@
 package finalproject.comp3617.com.eventhub;
 
 import android.app.Application;
+import android.os.Vibrator;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.firebase.auth.FirebaseUser;
@@ -10,8 +11,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
+import finalproject.comp3617.com.eventhub.Model.Event;
 import io.realm.Realm;
 
 public class App extends Application {
@@ -26,6 +30,9 @@ public class App extends Application {
         public static DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         public static FirebaseUser currentUser;
         public static GoogleSignInClient mGoogleSignInClient;
+        public static HashMap<String, Event> eventsAll = new HashMap<>();
+        public static ArrayList<Event> eventsUser = new ArrayList<>();
+        public static Vibrator vibe;
         private static String pattern = "MMMM d yyyy";
         public static DateFormat df = new SimpleDateFormat(pattern, Locale.getDefault());
 
@@ -43,6 +50,11 @@ public class App extends Application {
             } catch (ParseException e) {
                 return null;
             }
+        }
+
+        public static void removeEvent(String s) {
+            database.child("users/").child(currentUser.getUid()).child("events")
+                    .child(s).removeValue();
         }
     }
 }

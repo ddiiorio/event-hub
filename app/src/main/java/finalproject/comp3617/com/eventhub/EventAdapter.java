@@ -3,7 +3,10 @@ package finalproject.comp3617.com.eventhub;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
+import android.os.VibrationEffect;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,6 +20,8 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import finalproject.comp3617.com.eventhub.Model.Event;
+
+import static finalproject.comp3617.com.eventhub.App.Constants.vibe;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
     private ArrayList<Event> events;
@@ -63,6 +68,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final Event event = events.get(position);
         View.OnClickListener onClick;
+        View.OnLongClickListener onLongClick;
         holder.title.setText(event.getTitle());
         holder.eventDate.setText(event.getEventDate());
         String imageUrl = event.getImgUrl();
@@ -94,6 +100,34 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         };
         holder.cardView.setOnClickListener(onClick);
         holder.thumbImg.setOnClickListener(onClick);
+
+        onLongClick = v -> {
+            AlertDialog.Builder builder =
+                    new AlertDialog.Builder(v.getContext());
+            builder.setMessage(R.string.deleteDialog);
+            builder.setTitle(R.string.deleteEventTitle);
+            builder.setIcon(R.drawable.ic_warning_black_24dp);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibe.vibrate(VibrationEffect.createOneShot(50,
+                        VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
+                //deprecated in API 26
+                vibe.vibrate(50);
+            }
+
+            //not removing items if cancel is done
+            builder.setPositiveButton((R.string.remove),
+                    (dialog, which) -> {
+                        //code to delete event
+                        App.Constants.removeEvent(events.get(position).getId());
+                        dialog.dismiss();
+                    }).setNegativeButton((android.R.string.cancel),
+                    (dialog, which) -> dialog.dismiss()).show();
+            return false;
+        };
+
+        holder.cardView.setOnLongClickListener(onLongClick);
+        holder.thumbImg.setOnLongClickListener(onLongClick);
     }
 
     @Override

@@ -3,7 +3,6 @@ package finalproject.comp3617.com.eventhub;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -12,12 +11,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import com.ticketmaster.api.discovery.DiscoveryApi;
 import com.ticketmaster.api.discovery.operation.SearchEventsOperation;
 import com.ticketmaster.api.discovery.response.PagedResponse;
@@ -27,10 +22,7 @@ import com.ticketmaster.discovery.model.Venue;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 public class EventSearchActivity extends AppCompatActivity {
     private static final String tmApiKey = "WMqw4xi5StCjkwj6c1ifQnxlmVuBGxDw";
@@ -45,7 +37,6 @@ public class EventSearchActivity extends AppCompatActivity {
     private ProgressDialog progDailog;
     private LinearLayout result0, result1, result2;
     protected DatabaseReference db;
-    protected Map<String, finalproject.comp3617.com.eventhub.Model.Event> events1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +46,7 @@ public class EventSearchActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        setupFirebase();
+        db = App.Constants.database;
 
         discoveryApi = new DiscoveryApi(tmApiKey);
         citySearch = findViewById(R.id.citySearch);
@@ -109,27 +100,6 @@ public class EventSearchActivity extends AppCompatActivity {
         result2.setOnClickListener(v -> {
             if (event0 != null) {
                 addEventDialog(event2);
-            }
-        });
-    }
-
-    private void setupFirebase() {
-        db = App.Constants.database.child("events");
-        db.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                events1 = new HashMap<>();
-                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
-                {
-                    finalproject.comp3617.com.eventhub.Model.Event event
-                            = dataSnapshot1.getValue(finalproject.comp3617.com.eventhub.Model.Event.class);
-                    events1.put(event.getId(), event);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(EventSearchActivity.this, "Oops.... Something is wrong", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -238,7 +208,9 @@ public class EventSearchActivity extends AppCompatActivity {
             //code to add event
             finalproject.comp3617.com.eventhub.Model.Event event
                     = new finalproject.comp3617.com.eventhub.Model.Event();
-            event.setId(UUID.randomUUID().toString());
+//            event.setId(UUID.randomUUID().toString());
+            int eventHash = event.hashCode();
+            event.setId(String.valueOf(eventHash));
             event.setTitle(e.getName());
             java.util.Date eventDate = App.Constants
                     .parseDate(e.getDates().getStart().getLocalDate());
@@ -253,8 +225,15 @@ public class EventSearchActivity extends AppCompatActivity {
             } else {
                 event.setVenueAddress(addy1);
             }
-            events1.put(event.getId(), event);
-            db.setValue(events1);
+            if (App.Constants.eventsAll.containsKey(event.getId())) {
+                db.child("users/").child(App.Constants.currentUser.getUid()).child("events")
+                        .child(event.getId()).setValue(true);
+            } else {
+                App.Constants.eventsAll.put(event.getId(), event);
+                db.child("events").child(event.getId()).setValue(event);
+                db.child("users/").child(App.Constants.currentUser.getUid()).child("events")
+                        .child(event.getId()).setValue(true);
+            }
             dialog.dismiss();
             finish();
         }).setNegativeButton(getText(android.R.string.cancel),
