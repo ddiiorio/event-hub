@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public class EventViewActivity extends AppCompatActivity {
     private RecyclerView.Adapter myAdapter;
     private ArrayList<Event> events;
     protected DatabaseReference db;
+    private Query dataQuery;
     private EditText newEventTitle, newEventThumb;
 
     @Override
@@ -61,7 +63,8 @@ public class EventViewActivity extends AppCompatActivity {
         setupFab();
 
         db = App.Constants.database.child("events");
-        db.addValueEventListener(new ValueEventListener() {
+        dataQuery = db.orderByChild("eventDateMillis");
+        dataQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 events = new ArrayList<>();
@@ -76,7 +79,8 @@ public class EventViewActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(EventViewActivity.this, "Oops.... Something is wrong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(EventViewActivity.this,
+                        "Oops.... Something is wrong", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -116,13 +120,6 @@ public class EventViewActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.signOut:
-//                SyncUser syncUser = SyncUser.current();
-//                if (syncUser != null) {
-//                    syncUser.logOut();
-//                    Intent i = new Intent(this, SignInActivity.class);
-//                    startActivity(i);
-//                    finish();
-//                }
                 logout();
                 return true;
         }
@@ -182,18 +179,6 @@ public class EventViewActivity extends AppCompatActivity {
         window.setLayout(GridLayoutManager.LayoutParams.MATCH_PARENT,
                 GridLayoutManager.LayoutParams.WRAP_CONTENT);
     }
-
-//    private RealmResults<Event> setUpRealm() {
-//        SyncConfiguration configuration = SyncUser.current()
-//                .createConfiguration(REALM_BASE_URL + "/eventhub")
-//                .build();
-//        realmDb = Realm.getInstance(configuration);
-//
-//        return realmDb
-//                .where(Event.class)
-//                .sort("eventDate", Sort.ASCENDING)
-//                .findAllAsync();
-//    }
 
 //    private void setUpItemTouchHelper() {
 //        ItemTouchHelper.SimpleCallback simpleCallback =

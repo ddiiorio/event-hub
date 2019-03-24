@@ -23,10 +23,13 @@ import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.firebase.database.DatabaseReference;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import finalproject.comp3617.com.eventhub.Model.Event;
 
 public class EventDetailsActivity extends AppCompatActivity {
     private static final int PLACE_PICKER_REQUEST = 1;
@@ -36,6 +39,8 @@ public class EventDetailsActivity extends AppCompatActivity {
     private TextView eventDate, eventVenue, venueAddress, eventTitle;
     private String id = null, imageUrl;
     protected GeoDataClient mGeoDataClient;
+    protected DatabaseReference db;
+    protected Event current;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,6 +56,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         venueAddress = findViewById(R.id.venueAddress);
         ImageView backBtn = findViewById(R.id.backBtn);
         TextView openMapsText = findViewById(R.id.openMapsText);
+        db = App.Constants.database.child("events");
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -59,8 +65,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 eventTitle.setText(intent.getStringExtra("title"));
                 String dateTemp = intent.getStringExtra("date");
                 if (dateTemp != null) {
-                    eventDate.setText(new SimpleDateFormat("MMMM d yyyy")
-                            .format(System.currentTimeMillis()));
+                    eventDate.setText(dateTemp);
                 }
                 imageUrl = intent.getStringExtra("image");
                 ImageHelper.loadImage(imageUrl, eventImage);
@@ -105,9 +110,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 builder.setLatLngBounds(new LatLngBounds(swCorner, neCorner));
                 Intent i = builder.build(EventDetailsActivity.this);
                 startActivityForResult(i, PLACE_PICKER_REQUEST);
-            } catch (GooglePlayServicesRepairableException e) {
-                Log.e(TAG, String.format("GooglePlayServices Not Available [%s]", e.getMessage()));
-            } catch (GooglePlayServicesNotAvailableException e) {
+            } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                 Log.e(TAG, String.format("GooglePlayServices Not Available [%s]", e.getMessage()));
             } catch (Exception e) {
                 Log.e(TAG, String.format("PlacePicker Exception: %s", e.getMessage()));
@@ -134,20 +137,10 @@ public class EventDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public void saveSelectedDate() {
-//        realmDb.executeTransaction(new Realm.Transaction() {
-//            @Override
-//            public void execute(Realm realm) {
-//                Event temp = realm.where(Event.class).equalTo("id", id)
-//                        .findFirstAsync();
-//                if (temp != null) {
-//                    temp.setImgUrl(imageUrl);
-//                    temp.setTitle(eventTitle.getText().toString());
-//                    temp.setEventDate(parseDate(eventDate.getText().toString()));
-//                }
-//                realmDb.copyToRealmOrUpdate(temp);
-//            }
-//        });
+    public void saveSelectedDate(Date d) {
+        String dateString = App.Constants.df.format(d);
+        db.child(id).child("eventDate").setValue(dateString);
+        db.child(id).child("eventDateMillis").setValue(d.getTime());
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

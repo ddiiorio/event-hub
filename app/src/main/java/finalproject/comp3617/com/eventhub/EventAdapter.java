@@ -2,6 +2,7 @@ package finalproject.comp3617.com.eventhub;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -11,13 +12,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import finalproject.comp3617.com.eventhub.Model.Event;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
-    ArrayList<Event> events;
+    private ArrayList<Event> events;
     Context context;
 
     @Override
@@ -62,23 +64,22 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         final Event event = events.get(position);
         View.OnClickListener onClick;
         holder.title.setText(event.getTitle());
-        holder.eventDate.setText(new SimpleDateFormat("MMMM d yyyy")
-                .format(System.currentTimeMillis())); //TODO: change back to event.getDate
+        holder.eventDate.setText(event.getEventDate());
         String imageUrl = event.getImgUrl();
         ImageHelper.loadThumb(imageUrl, holder.thumbImg);
-        //Date endDate = System.currentTimeMillis(); //TODO: change back to event.getEventDate()
-        //long diff = endDate.getTime() - System.currentTimeMillis();
-        //double days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-        //int x = (int) Math.round(days);
-//        if (x == 0) {
-//            holder.countdown.setTextColor(Color.RED);
-//            holder.countdown.setText(String.valueOf("Starts: TODAY!!"));
-//        } else if (isNegative(days)) {
-//            holder.countdown.setText(String.valueOf("Passed"));
-//        } else {
-//            String dayDiff = "Starts: " + (x + 1) + " days";
-//            holder.countdown.setText(dayDiff);
-//        }
+        Date endDate = App.Constants.parseFirebaseDate(event.getEventDate());
+        long diff = endDate.getTime() - System.currentTimeMillis();
+        double days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+        int x = (int) Math.round(days);
+        if (x == 0) {
+            holder.countdown.setTextColor(Color.RED);
+            holder.countdown.setText(String.valueOf("Starts: TODAY!!"));
+        } else if (isNegative(days)) {
+            holder.countdown.setText(String.valueOf("Passed"));
+        } else {
+            String dayDiff = "Starts: " + (x + 1) + " days";
+            holder.countdown.setText(dayDiff);
+        }
 
         onClick = v -> {
             Intent viewEvent = new Intent(v.getContext(), EventDetailsActivity.class);

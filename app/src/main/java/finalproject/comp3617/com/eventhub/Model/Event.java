@@ -14,6 +14,7 @@ public class Event implements Serializable {
     private String venueName;
     private String venueAddress;
     private String eventDate;
+    private long eventDateMillis;
 
     public Event() {  }
 
@@ -81,5 +82,13 @@ public class Event implements Serializable {
 
     public void setEventDate(String eventDate) {
         this.eventDate = eventDate;
+    }
+
+    public long getEventDateMillis() {
+        return eventDateMillis;
+    }
+
+    public void setEventDateMillis(long eventDateMillis) {
+        this.eventDateMillis = eventDateMillis;
     }
 }

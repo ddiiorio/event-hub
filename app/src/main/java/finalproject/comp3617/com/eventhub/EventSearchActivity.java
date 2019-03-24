@@ -1,9 +1,9 @@
 package finalproject.comp3617.com.eventhub;
 
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -12,20 +12,24 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.ticketmaster.api.discovery.DiscoveryApi;
 import com.ticketmaster.api.discovery.operation.SearchEventsOperation;
 import com.ticketmaster.api.discovery.response.PagedResponse;
-import com.ticketmaster.discovery.model.Date;
 import com.ticketmaster.discovery.model.Event;
 import com.ticketmaster.discovery.model.Events;
 import com.ticketmaster.discovery.model.Venue;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class EventSearchActivity extends AppCompatActivity {
@@ -40,6 +44,8 @@ public class EventSearchActivity extends AppCompatActivity {
     private Event event0, event1, event2;
     private ProgressDialog progDailog;
     private LinearLayout result0, result1, result2;
+    protected DatabaseReference db;
+    protected Map<String, finalproject.comp3617.com.eventhub.Model.Event> events1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +54,8 @@ public class EventSearchActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        setupFirebase();
 
         discoveryApi = new DiscoveryApi(tmApiKey);
         citySearch = findViewById(R.id.citySearch);
@@ -105,6 +113,27 @@ public class EventSearchActivity extends AppCompatActivity {
         });
     }
 
+    private void setupFirebase() {
+        db = App.Constants.database.child("events");
+        db.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                events1 = new HashMap<>();
+                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
+                {
+                    finalproject.comp3617.com.eventhub.Model.Event event
+                            = dataSnapshot1.getValue(finalproject.comp3617.com.eventhub.Model.Event.class);
+                    events1.put(event.getId(), event);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(EventSearchActivity.this, "Oops.... Something is wrong", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private class Ticketmaster extends AsyncTask<Void, Void, List<Event>> {
         @Override
         protected void onPreExecute() {
@@ -155,8 +184,9 @@ public class EventSearchActivity extends AppCompatActivity {
                 resultTitle0.setText(event0.getName());
                 List<Venue> venues0 = event0.getVenues();
                 resultVenue0.setText(venues0.get(0).getName());
-                Date.Start date0 = event0.getDates().getStart();
-                resultDate0.setText(date0.getLocalDate());
+                java.util.Date date0 = App.Constants.parseDate(
+                        event0.getDates().getStart().getLocalDate());
+                resultDate0.setText(App.Constants.df.format(date0));
                 if (events.size() > 1 && events.get(1) != null) {
                     result1.setVisibility(LinearLayout.VISIBLE);
                     line0.setVisibility(View.VISIBLE);
@@ -166,8 +196,9 @@ public class EventSearchActivity extends AppCompatActivity {
                     resultTitle1.setText(event1.getName());
                     List<Venue> venues1 = event1.getVenues();
                     resultVenue1.setText(venues1.get(0).getName());
-                    Date.Start date1 = event1.getDates().getStart();
-                    resultDate1.setText(date1.getLocalDate());
+                    java.util.Date date1 = App.Constants.parseDate(
+                            event1.getDates().getStart().getLocalDate());
+                    resultDate1.setText(App.Constants.df.format(date1));
                     if (events.size() > 2 && events.get(2) != null) {
                         result2.setVisibility(LinearLayout.VISIBLE);
                         line1.setVisibility(View.VISIBLE);
@@ -177,8 +208,9 @@ public class EventSearchActivity extends AppCompatActivity {
                         resultTitle2.setText(event2.getName());
                         List<Venue> venues2 = event2.getVenues();
                         resultVenue2.setText(venues2.get(0).getName());
-                        Date.Start date2 = event2.getDates().getStart();
-                        resultDate2.setText(date2.getLocalDate());
+                        java.util.Date date2 = App.Constants.parseDate(
+                                event2.getDates().getStart().getLocalDate());
+                        resultDate2.setText(App.Constants.df.format(date2));
                     }
                 }
             } else {
@@ -202,39 +234,31 @@ public class EventSearchActivity extends AppCompatActivity {
         builder.setTitle(R.string.addEventTitle);
         builder.setIcon(R.drawable.ic_add_box_black_24dp);
 
-        builder.setPositiveButton(getText(R.string.confirm), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //code to add event
-                finalproject.comp3617.com.eventhub.Model.Event event =
-                        new finalproject.comp3617.com.eventhub.Model.Event();
-                event.setId(UUID.randomUUID().toString());
-                event.setTitle(e.getName());
-                String date = e.getDates().getStart().getLocalDate();
-                event.setEventDate(String.valueOf(System.currentTimeMillis())); //TODO: change back to parse(date)
-                event.setImgUrl(e.getImages().get(0).getUrl());
-                event.setVenueName(e.getVenues().get(0).getName());
-                String addy1 = e.getVenues().get(0).getAddress().getLine1();
-                String addy2 = e.getVenues().get(0).getAddress().getLine2();
-                if (addy2 != null) {
-                    event.setVenueAddress(addy1 + addy2);
-                } else {
-                    event.setVenueAddress(addy1);
-                }
-
-                dialog.dismiss();
-                finish();
+        builder.setPositiveButton(getText(R.string.confirm), (dialog, which) -> {
+            //code to add event
+            finalproject.comp3617.com.eventhub.Model.Event event
+                    = new finalproject.comp3617.com.eventhub.Model.Event();
+            event.setId(UUID.randomUUID().toString());
+            event.setTitle(e.getName());
+            java.util.Date eventDate = App.Constants
+                    .parseDate(e.getDates().getStart().getLocalDate());
+            event.setEventDate(App.Constants.df.format(eventDate));
+            event.setImgUrl(e.getImages().get(0).getUrl());
+            event.setVenueName(e.getVenues().get(0).getName());
+            event.setEventDateMillis(eventDate.getTime());
+            String addy1 = e.getVenues().get(0).getAddress().getLine1();
+            String addy2 = e.getVenues().get(0).getAddress().getLine2();
+            if (addy2 != null) {
+                event.setVenueAddress(addy1 + addy2);
+            } else {
+                event.setVenueAddress(addy1);
             }
+            events1.put(event.getId(), event);
+            db.setValue(events1);
+            dialog.dismiss();
+            finish();
         }).setNegativeButton(getText(android.R.string.cancel),
                 (dialog, which) -> dialog.dismiss()).show();
-    }
-
-    private static java.util.Date parseDate(String date) {
-        try {
-            return new SimpleDateFormat("yyyy-MM-dd").parse(date);
-        } catch (ParseException e) {
-            return null;
-        }
     }
 
     @Override
