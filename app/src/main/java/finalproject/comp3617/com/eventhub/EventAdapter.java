@@ -90,9 +90,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         onClick = v -> {
             Intent viewEvent = new Intent(v.getContext(), EventDetailsActivity.class);
             viewEvent.putExtra("id", events.get(position).getId());
-            viewEvent.putExtra("title", holder.title.getText().toString());
-            viewEvent.putExtra("date", events.get(position).getEventDate());
-            viewEvent.putExtra("image", events.get(position).getImgUrl());
             viewEvent.putExtra("placeId", events.get(position).getPlaceId());
             viewEvent.putExtra("venueName", events.get(position).getVenueName());
             viewEvent.putExtra("venueAddress", events.get(position).getVenueAddress());

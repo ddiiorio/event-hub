@@ -41,4 +41,5 @@
     <!-- ImageView descriptions -->
     <string name="signInBgDescription">Sign in page background image</string>
     <string name="ticketmasterDescription">Ticketmaster logo</string>
+    <string name="alreadyExists">Event already exists in your Event Hub!</string>
 </resources>
