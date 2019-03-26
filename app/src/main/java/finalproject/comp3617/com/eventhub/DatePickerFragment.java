@@ -9,9 +9,8 @@ import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Locale;
+import java.util.Date;
 
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
@@ -31,16 +30,15 @@ public class DatePickerFragment extends DialogFragment
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        SimpleDateFormat format = new SimpleDateFormat("EEE, d MMM yyyy",
-                Locale.getDefault());
         TextView evDate = getActivity().findViewById(R.id.dateTxt);
         Calendar calendar = Calendar.getInstance();
         calendar.set(year,month,dayOfMonth,8,0,0);
-        String dateTemp = format.format(calendar.getTime());
-        evDate.setText(dateTemp);
+        String datePicked = App.Constants.df.format(calendar.getTime());
+        Date dateTemp = App.Constants.parseFirebaseDate(datePicked);
+        evDate.setText(datePicked);
         String dateConfirm = getResources().getString(R.string.dateConfirm);
         Snackbar.make(getActivity().findViewById(android.R.id.content),
                 dateConfirm, Snackbar.LENGTH_LONG).show();
-        ((EventDetailsActivity) getContext()).saveSelectedDate();
+        ((EventDetailsActivity) getContext()).saveSelectedDate(dateTemp);
     }
 }

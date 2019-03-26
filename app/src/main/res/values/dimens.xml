@@ -5,10 +5,12 @@
     <dimen name="fab_margin">10dp</dimen>
     <dimen name="backdrop_title">30dp</dimen>
     <dimen name="card_margin">5dp</dimen>
+    <dimen name="delete_margin">1dp</dimen>
     <dimen name="card_event_radius">0dp</dimen>
-    <dimen name="event_image_height">160dp</dimen>
-    <dimen name="event_title_padding">10dp</dimen>
-    <dimen name="event_title">15sp</dimen>
+    <dimen name="event_image_height">150dp</dimen>
+    <dimen name="event_title_padding">5dp</dimen>
+    <dimen name="event_title">13sp</dimen>
     <dimen name="date_padding_bottom">5dp</dimen>
     <dimen name="event_date">12sp</dimen>
+    <dimen name="search_margin">8sp</dimen>
 </resources>
