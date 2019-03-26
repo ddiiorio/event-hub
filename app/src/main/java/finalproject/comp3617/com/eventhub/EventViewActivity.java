@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
@@ -32,13 +33,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Date;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import finalproject.comp3617.com.eventhub.Model.Event;
 
-import static finalproject.comp3617.com.eventhub.App.Constants.eventsUser;
 import static finalproject.comp3617.com.eventhub.App.Constants.eventsAll;
+import static finalproject.comp3617.com.eventhub.App.Constants.eventsUser;
 
 public class EventViewActivity extends AppCompatActivity {
     private static final String TAG = "LOGTAG";
@@ -47,7 +51,6 @@ public class EventViewActivity extends AppCompatActivity {
     private RecyclerView.Adapter myAdapter;
     protected DatabaseReference dbEvents;
     protected DatabaseReference dbUserEvents;
-    private Query dataQuery;
     private EditText newEventTitle, newEventThumb;
     private ProgressBar progressBar;
 
@@ -57,24 +60,45 @@ public class EventViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_view);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         progressBar = findViewById(R.id.progressCircular);
-        App.Constants.vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
-        setupFirebaseEvents();
-        setupFab();
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Intent intent = new Intent(this, SignInActivity.class);
+            finish();
+            startActivity(intent);
+            Log.w(TAG, "No User");
+        } else {
+            Log.w(TAG, "User exists");
+            Log.w(TAG, FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+            App.Constants.profileImage = Uri.parse(FirebaseAuth.getInstance()
+                    .getCurrentUser().getPhotoUrl().toString());
+            App.Constants.currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        recyclerView = findViewById(R.id.recycler_view);
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2,
-                dpToPx(10), true));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+            App.Constants.vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            CircleImageView profile = findViewById(R.id.profileImage);
+            Picasso.get()
+                    .load(App.Constants.profileImage)
+                    .placeholder(R.drawable.empty_profile)
+                    .into(profile);
+
+            setupFirebaseEvents();
+            setupFab();
+
+            recyclerView = findViewById(R.id.recycler_view);
+            RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
+            recyclerView.setLayoutManager(mLayoutManager);
+            recyclerView.addItemDecoration(new GridSpacingItemDecoration(2,
+                    dpToPx(10), true));
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+        }
     }
 
     private void setupFirebaseEvents() {
         progressBar.setVisibility(View.VISIBLE);
         dbEvents = App.Constants.database.child("events");
-        dataQuery = dbEvents.orderByChild("eventDateMillis");
+        Query dataQuery = dbEvents.orderByChild("eventDateMillis");
         dbUserEvents = App.Constants.database.child("users/")
                 .child(App.Constants.currentUser.getUid()).child("events");
 
@@ -127,7 +151,7 @@ public class EventViewActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_event_view, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -163,17 +187,19 @@ public class EventViewActivity extends AppCompatActivity {
             String url = newEventThumb.getText().toString();
 
             if (title.length() > 0) {
-//                Event event = new Event();
-//                event.setId(UUID.randomUUID().toString());
-//                event.setTitle(title);
-//                event.setEventDate(new Date());
-//                event.setImgUrl(url);
-//                realmDb.beginTransaction();
-//                realmDb.copyToRealmOrUpdate(event);
-//                realmDb.commitTransaction();
-//                newEventTitle.setText("");
-//                newEventThumb.setText("");
-//                refreshList();
+                Event event = new Event();
+                Date date = new Date();
+                event.setTitle(title);
+                event.setEventDate(App.Constants.df.format(date));
+                event.setImgUrl(url);
+                event.setEventDateMillis(date.getTime());
+                event.setId(String.valueOf(event.hashCode()));
+                newEventTitle.setText("");
+                newEventThumb.setText("");
+                App.Constants.eventsAll.put(event.getId(), event);
+                eventsUser.add(event);
+                dbEvents.child(event.getId()).setValue(event);
+                dbUserEvents.child(event.getId()).setValue(true);
                 dialog.dismiss();
                 String eventAddConfirm = getResources().getString(R.string.eventAddConfirm);
                 Snackbar.make(findViewById(android.R.id.content),
@@ -222,7 +248,7 @@ public class EventViewActivity extends AppCompatActivity {
 
     private void logout() {
         FirebaseAuth.getInstance().signOut();
-        App.Constants.mGoogleSignInClient.signOut();
+//        App.Constants.mGoogleSignInClient.signOut();
         Intent intent = new Intent(this, SignInActivity.class);
         finish();
         startActivity(intent);

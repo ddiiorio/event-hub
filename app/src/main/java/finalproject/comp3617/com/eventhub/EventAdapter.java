@@ -35,6 +35,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView title;
         ImageView thumbImg;
+        ImageView deleteBtn;
         TextView countdown;
         TextView eventDate;
         CardView cardView;
@@ -43,6 +44,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
             super(v);
             title = v.findViewById(R.id.title);
             thumbImg = v.findViewById(R.id.thumbImg);
+            deleteBtn = v.findViewById(R.id.eventDeleteBtn);
             eventDate = v.findViewById(R.id.date);
             countdown = v.findViewById(R.id.countdown);
             cardView = v.findViewById(R.id.card_view);
@@ -68,7 +70,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final Event event = events.get(position);
         View.OnClickListener onClick;
-        View.OnLongClickListener onLongClick;
+        View.OnClickListener onClickDelete;
         holder.title.setText(event.getTitle());
         holder.eventDate.setText(event.getEventDate());
         String imageUrl = event.getImgUrl();
@@ -98,12 +100,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         holder.cardView.setOnClickListener(onClick);
         holder.thumbImg.setOnClickListener(onClick);
 
-        onLongClick = v -> {
+        onClickDelete = v -> {
             AlertDialog.Builder builder =
                     new AlertDialog.Builder(v.getContext());
             builder.setMessage(R.string.deleteDialog);
             builder.setTitle(R.string.deleteEventTitle);
-            builder.setIcon(R.drawable.ic_warning_black_24dp);
+//            builder.setIcon(R.drawable.ic_warning_black_24dp);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 vibe.vibrate(VibrationEffect.createOneShot(50,
                         VibrationEffect.DEFAULT_AMPLITUDE));
@@ -120,11 +122,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
                         dialog.dismiss();
                     }).setNegativeButton((android.R.string.cancel),
                     (dialog, which) -> dialog.dismiss()).show();
-            return false;
         };
 
-        holder.cardView.setOnLongClickListener(onLongClick);
-        holder.thumbImg.setOnLongClickListener(onLongClick);
+        holder.deleteBtn.setOnClickListener(onClickDelete);
     }
 
     @Override

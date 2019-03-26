@@ -3,11 +3,8 @@ package finalproject.comp3617.com.eventhub.Model;
 import java.io.Serializable;
 import java.util.Objects;
 
-import io.realm.annotations.PrimaryKey;
-
 public class Event implements Serializable {
     private static final long serialVersionUID = 1L;
-    @PrimaryKey
     private String id;
     private String title;
     private String imgUrl;

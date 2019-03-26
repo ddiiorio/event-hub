@@ -1,6 +1,7 @@
 package finalproject.comp3617.com.eventhub;
 
 import android.app.Application;
+import android.net.Uri;
 import android.os.Vibrator;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -16,20 +17,19 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import finalproject.comp3617.com.eventhub.Model.Event;
-import io.realm.Realm;
 
 public class App extends Application {
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Realm.init(this);
     }
 
     public static class Constants {
         public static DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         public static FirebaseUser currentUser;
         public static GoogleSignInClient mGoogleSignInClient;
+        public static Uri profileImage;
         public static HashMap<String, Event> eventsAll = new HashMap<>();
         public static ArrayList<Event> eventsUser = new ArrayList<>();
         public static Vibrator vibe;

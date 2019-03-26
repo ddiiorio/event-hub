@@ -1,6 +1,7 @@
 package finalproject.comp3617.com.eventhub;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -46,18 +47,17 @@ public class SignInActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if (account != null) {
-            App.Constants.currentUser = mAuth.getCurrentUser();
-            Intent intent = new Intent(this, EventViewActivity.class);
-//            intent.putExtra("signIn", FLAG);
-            finish();
-            startActivity(intent);
-        }
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+//        if (account != null) {
+//            App.Constants.currentUser = mAuth.getCurrentUser();
+//            Intent intent = new Intent(this, EventViewActivity.class);
+//            finish();
+//            startActivity(intent);
+//        }
+//    }
 
     private void signIn() {
         progressBar.setVisibility(View.VISIBLE);
@@ -97,6 +97,8 @@ public class SignInActivity extends AppCompatActivity {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithCredential:success");
                         App.Constants.currentUser = mAuth.getCurrentUser();
+                        App.Constants.profileImage = Uri.parse(
+                                App.Constants.currentUser.getPhotoUrl().toString());
                         Intent intent = new Intent(getBaseContext(), EventViewActivity.class);
                         intent.putExtra("signIn", FLAG);
                         finish();
@@ -106,9 +108,7 @@ public class SignInActivity extends AppCompatActivity {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.getException());
                         Snackbar.make(findViewById(R.id.signInContent), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
-//                            updateUI(null);
                     }
-
                 });
     }
 }

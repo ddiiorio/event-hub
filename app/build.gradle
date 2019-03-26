@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 28
@@ -8,7 +7,7 @@ android {
         minSdkVersion 24
         targetSdkVersion 28
         versionCode 1
-        versionName "1.0"
+        versionName "2.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -16,9 +15,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-    }
-    realm {
-        syncEnabled = true
     }
     buildToolsVersion '28.0.3'
     compileOptions {
@@ -49,6 +45,7 @@ dependencies {
     implementation 'com.ticketmaster.api:discovery-java:0.1.6'
     implementation 'com.github.clans:fab:1.6.4'
     implementation 'com.shobhitpuri.custombuttons:google-signin:1.0.0'
+    implementation 'de.hdodenhof:circleimageview:3.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -14,6 +15,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.google.firebase.database.DatabaseReference;
+import com.squareup.picasso.Picasso;
 import com.ticketmaster.api.discovery.DiscoveryApi;
 import com.ticketmaster.api.discovery.operation.SearchEventsOperation;
 import com.ticketmaster.api.discovery.response.PagedResponse;
@@ -24,6 +26,8 @@ import com.ticketmaster.discovery.model.Venue;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static finalproject.comp3617.com.eventhub.App.Constants.eventsUser;
 
@@ -45,9 +49,16 @@ public class EventSearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_search);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+        CircleImageView profile = findViewById(R.id.profileImage);
+        Picasso.get()
+                .load(App.Constants.profileImage)
+                .placeholder(R.drawable.empty_profile)
+                .into(profile);
 
         db = App.Constants.database;
 
@@ -205,7 +216,7 @@ public class EventSearchActivity extends AppCompatActivity {
                 new AlertDialog.Builder(EventSearchActivity.this);
         builder.setMessage(getText(R.string.addEventDialog));
         builder.setTitle(R.string.addEventTitle);
-        builder.setIcon(R.drawable.ic_add_box_black_24dp);
+//        builder.setIcon(R.drawable.ic_add_box_black_24dp);
 
         builder.setPositiveButton(getText(R.string.confirm), (dialog, which) -> {
             //code to add event
@@ -232,12 +243,13 @@ public class EventSearchActivity extends AppCompatActivity {
                     eventsUser.add(event);
                     db.child("users/").child(App.Constants.currentUser.getUid()).child("events")
                             .child(event.getId()).setValue(true);
+                    dialog.dismiss();
+                    finish();
                 } else {
                     dialog.dismiss();
                     String alreadyExists = getResources().getString(R.string.alreadyExists);
                     Snackbar.make(findViewById(android.R.id.content),
                             alreadyExists, Snackbar.LENGTH_LONG).show();
-
                 }
             } else {
                 App.Constants.eventsAll.put(event.getId(), event);
