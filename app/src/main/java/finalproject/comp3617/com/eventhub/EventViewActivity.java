@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -18,11 +19,9 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -46,13 +45,12 @@ import static finalproject.comp3617.com.eventhub.App.Constants.eventsUser;
 
 public class EventViewActivity extends AppCompatActivity {
     private static final String TAG = "LOGTAG";
-    private static final String FLAG = "FLAG";
     protected RecyclerView recyclerView;
     private RecyclerView.Adapter myAdapter;
     protected DatabaseReference dbEvents;
     protected DatabaseReference dbUserEvents;
     private EditText newEventTitle, newEventThumb;
-    private ProgressBar progressBar;
+    protected SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +59,7 @@ public class EventViewActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        progressBar = findViewById(R.id.progressCircular);
+        mSwipeRefreshLayout = findViewById(R.id.content);
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             Intent intent = new Intent(this, SignInActivity.class);
@@ -83,6 +81,16 @@ public class EventViewActivity extends AppCompatActivity {
                     .placeholder(R.drawable.empty_profile)
                     .into(profile);
 
+            mSwipeRefreshLayout.setOnRefreshListener(
+                    () -> {
+                        Log.i(TAG, "onRefresh called from SwipeRefreshLayout");
+
+                        // This method performs the actual data-refresh operation.
+                        // The method calls setRefreshing(false) when it's finished.
+                        setupFirebaseEvents();
+                    }
+            );
+
             setupFirebaseEvents();
             setupFab();
 
@@ -96,7 +104,7 @@ public class EventViewActivity extends AppCompatActivity {
     }
 
     private void setupFirebaseEvents() {
-        progressBar.setVisibility(View.VISIBLE);
+        mSwipeRefreshLayout.setRefreshing(true);
         dbEvents = App.Constants.database.child("events");
         Query dataQuery = dbEvents.orderByChild("eventDateMillis");
         dbUserEvents = App.Constants.database.child("users/")
@@ -105,8 +113,7 @@ public class EventViewActivity extends AppCompatActivity {
         dataQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
-                {
+                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()) {
                     Event event = dataSnapshot1.getValue(Event.class);
                     eventsAll.put(event.getId(), event);
                 }
@@ -120,11 +127,11 @@ public class EventViewActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 eventsUser = new ArrayList<>();
-                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
-                {
+                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()) {
                     eventsUser.add(eventsAll.get(dataSnapshot1.getKey()));
                 }
-                progressBar.setVisibility(View.INVISIBLE);
+                eventsUser.sort(new App.Constants.EventComparator());
+                mSwipeRefreshLayout.setRefreshing(false);
                 myAdapter = new EventAdapter(EventViewActivity.this, eventsUser);
                 recyclerView.setAdapter(myAdapter);
             }
@@ -162,6 +169,14 @@ public class EventViewActivity extends AppCompatActivity {
         switch (id) {
             case R.id.signOut:
                 logout();
+                return true;
+            case R.id.menu_refresh:
+                Log.i(TAG, "Refresh menu item selected");
+
+                // Start the refresh background task.
+                // This method calls setRefreshing(false) when it's finished.
+                setupFirebaseEvents();
+
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -248,7 +263,6 @@ public class EventViewActivity extends AppCompatActivity {
 
     private void logout() {
         FirebaseAuth.getInstance().signOut();
-//        App.Constants.mGoogleSignInClient.signOut();
         Intent intent = new Intent(this, SignInActivity.class);
         finish();
         startActivity(intent);

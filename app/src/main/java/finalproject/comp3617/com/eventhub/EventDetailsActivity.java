@@ -46,6 +46,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     private TextView openMapsText;
     private ImageView eventImage, backBtn;
     private String id = null;
+    private boolean isCustom;
     protected GeoDataClient mGeoDataClient;
     protected DatabaseReference db;
     protected Event current;
@@ -77,6 +78,7 @@ public class EventDetailsActivity extends AppCompatActivity {
             if (intent.getStringExtra("id") != null) {
                 id = intent.getStringExtra("id");
                 current = App.Constants.eventsAll.get(id);
+                isCustom = current.isCustomEvent();
                 currentIndex = eventsUser.indexOf(current);
                 eventTitle.setText(current.getTitle());
                 eventDate.setText(current.getEventDate());
@@ -108,32 +110,35 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        eventVenue.setOnClickListener(v -> {
-            LatLng neCorner = new LatLng(LAT, LON); //49.316054, -123.026416
-            LatLng swCorner = new LatLng(LAT-0.0976, LON-0.1888);
-            if (ActivityCompat.checkSelfPermission(EventDetailsActivity.this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(EventDetailsActivity.this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        PLACE_PICKER_REQUEST);
-                return;
-            }
-            try {
-                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                builder.setLatLngBounds(new LatLngBounds(swCorner, neCorner));
-                Intent i = builder.build(EventDetailsActivity.this);
-                startActivityForResult(i, PLACE_PICKER_REQUEST);
-            } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
-                Log.e(TAG, String.format("GooglePlayServices Not Available [%s]", e.getMessage()));
-            } catch (Exception e) {
-                Log.e(TAG, String.format("PlacePicker Exception: %s", e.getMessage()));
-            }
-        });
+        if (isCustom) {
+            eventVenue.setOnClickListener(v -> {
+                LatLng neCorner = new LatLng(LAT, LON); //49.316054, -123.026416
+                LatLng swCorner = new LatLng(LAT-0.0976, LON-0.1888);
+                if (ActivityCompat.checkSelfPermission(EventDetailsActivity.this,
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(EventDetailsActivity.this,
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            PLACE_PICKER_REQUEST);
+                    return;
+                }
+                try {
+                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                    builder.setLatLngBounds(new LatLngBounds(swCorner, neCorner));
+                    Intent i = builder.build(EventDetailsActivity.this);
+                    startActivityForResult(i, PLACE_PICKER_REQUEST);
+                } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+                    Log.e(TAG, String.format("GooglePlayServices Not Available [%s]", e.getMessage()));
+                } catch (Exception e) {
+                    Log.e(TAG, String.format("PlacePicker Exception: %s", e.getMessage()));
+                }
+            });
+
+            eventDate.setOnClickListener(this::showDatePickerDialog);
+        }
 
         backBtn.setOnClickListener(v -> finish());
         openMapsText.setOnClickListener(v -> launchGoogleMaps());
-        eventDate.setOnClickListener(this::showDatePickerDialog);
     }
 
 

@@ -43,4 +43,5 @@
     <string name="ticketmasterDescription">Ticketmaster logo</string>
     <string name="alreadyExists">Event already exists in your Event Hub!</string>
     <string name="delete_event_button">Delete event button</string>
+    <string name="menu_refresh">Refresh</string>
 </resources>

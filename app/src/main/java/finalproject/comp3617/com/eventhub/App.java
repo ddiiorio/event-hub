@@ -13,6 +13,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -55,6 +56,13 @@ public class App extends Application {
         public static void removeEvent(String s) {
             database.child("users/").child(currentUser.getUid()).child("events")
                     .child(s).removeValue();
+        }
+
+        public static class EventComparator implements Comparator<Event> {
+            @Override
+            public int compare(Event o1, Event o2) {
+                return Long.compare(o1.getEventDateMillis(), o2.getEventDateMillis());
+            }
         }
     }
 }

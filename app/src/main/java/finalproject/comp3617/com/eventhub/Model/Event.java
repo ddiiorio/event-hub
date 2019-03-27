@@ -13,6 +13,7 @@ public class Event implements Serializable {
     private String venueAddress;
     private String eventDate;
     private long eventDateMillis;
+    private boolean customEvent;
 
     public Event() {  }
 
@@ -108,5 +109,13 @@ public class Event implements Serializable {
 
     public void setEventDateMillis(long eventDateMillis) {
         this.eventDateMillis = eventDateMillis;
+    }
+
+    public boolean isCustomEvent() {
+        return customEvent;
+    }
+
+    public void setCustomEvent(boolean customEvent) {
+        this.customEvent = customEvent;
     }
 }
