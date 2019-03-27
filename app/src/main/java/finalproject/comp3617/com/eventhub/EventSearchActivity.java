@@ -223,6 +223,7 @@ public class EventSearchActivity extends AppCompatActivity {
             finalproject.comp3617.com.eventhub.Model.Event event
                     = new finalproject.comp3617.com.eventhub.Model.Event();
             event.setTitle(e.getName());
+            event.setCustomEvent(false);
             java.util.Date eventDate = App.Constants
                     .parseDate(e.getDates().getStart().getLocalDate());
             event.setEventDate(App.Constants.df.format(eventDate));

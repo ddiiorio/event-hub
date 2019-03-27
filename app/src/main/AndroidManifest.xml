@@ -38,10 +38,12 @@
         <activity
             android:name=".EventDetailsActivity"
             android:screenOrientation="portrait"
+            android:parentActivityName=".EventViewActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".EventSearchActivity"
             android:screenOrientation="portrait"
+            android:parentActivityName=".EventViewActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>
 </manifest>

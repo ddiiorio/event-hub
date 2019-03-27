@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -24,11 +25,13 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.firebase.database.DatabaseReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import finalproject.comp3617.com.eventhub.Model.Event;
 
 import static finalproject.comp3617.com.eventhub.App.Constants.eventsAll;
@@ -44,7 +47,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     private TextView eventTitle;
     private TextView eventDate;
     private TextView openMapsText;
-    private ImageView eventImage, backBtn;
+    private ImageView eventImage, tmLogo;
     private String id = null;
     private boolean isCustom;
     protected GeoDataClient mGeoDataClient;
@@ -56,15 +59,25 @@ public class EventDetailsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        CircleImageView profile = findViewById(R.id.profileImage);
+        Picasso.get()
+                .load(App.Constants.profileImage)
+                .placeholder(R.drawable.empty_profile)
+                .into(profile);
 
         mGeoDataClient = Places.getGeoDataClient(this, null);
 
         eventImage = findViewById(R.id.eventImage);
+        tmLogo = findViewById(R.id.ticketmasterLogo);
         eventTitle = findViewById(R.id.eventTitle);
         eventDate = findViewById(R.id.dateTxt);
         eventVenue = findViewById(R.id.venueTxt);
         venueAddress = findViewById(R.id.venueAddress);
-        backBtn = findViewById(R.id.backBtn);
         openMapsText = findViewById(R.id.openMapsText);
         db = App.Constants.database.child("events");
 
@@ -111,6 +124,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     private void setupListeners() {
         if (isCustom) {
+            tmLogo.setVisibility(View.INVISIBLE);
             eventVenue.setOnClickListener(v -> {
                 LatLng neCorner = new LatLng(LAT, LON); //49.316054, -123.026416
                 LatLng swCorner = new LatLng(LAT-0.0976, LON-0.1888);
@@ -137,7 +151,7 @@ public class EventDetailsActivity extends AppCompatActivity {
             eventDate.setOnClickListener(this::showDatePickerDialog);
         }
 
-        backBtn.setOnClickListener(v -> finish());
+//        backBtn.setOnClickListener(v -> finish());
         openMapsText.setOnClickListener(v -> launchGoogleMaps());
     }
 
@@ -197,7 +211,8 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }

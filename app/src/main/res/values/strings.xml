@@ -44,4 +44,5 @@
     <string name="alreadyExists">Event already exists in your Event Hub!</string>
     <string name="delete_event_button">Delete event button</string>
     <string name="menu_refresh">Refresh</string>
+    <string name="eventImageDesc">Event image</string>
 </resources>

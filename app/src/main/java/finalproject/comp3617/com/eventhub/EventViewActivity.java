@@ -208,6 +208,7 @@ public class EventViewActivity extends AppCompatActivity {
                 event.setEventDate(App.Constants.df.format(date));
                 event.setImgUrl(url);
                 event.setEventDateMillis(date.getTime());
+                event.setCustomEvent(true);
                 event.setId(String.valueOf(event.hashCode()));
                 newEventTitle.setText("");
                 newEventThumb.setText("");
