@@ -8,6 +8,7 @@ import android.os.VibrationEffect;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +26,7 @@ import static finalproject.comp3617.com.eventhub.App.Constants.vibe;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
     private ArrayList<Event> events;
-    Context context;
+    private Context context;
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
@@ -35,7 +36,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView title;
         ImageView thumbImg;
-        ImageView deleteBtn;
+        ImageView deleteOption;
         TextView countdown;
         TextView eventDate;
         CardView cardView;
@@ -44,7 +45,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
             super(v);
             title = v.findViewById(R.id.title);
             thumbImg = v.findViewById(R.id.thumbImg);
-            deleteBtn = v.findViewById(R.id.eventDeleteBtn);
+            deleteOption = v.findViewById(R.id.deleteOption);
             eventDate = v.findViewById(R.id.date);
             countdown = v.findViewById(R.id.countdown);
             cardView = v.findViewById(R.id.card_view);
@@ -101,30 +102,45 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         holder.thumbImg.setOnClickListener(onClick);
 
         onClickDelete = v -> {
-            AlertDialog.Builder builder =
-                    new AlertDialog.Builder(v.getContext());
-            builder.setMessage(R.string.deleteDialog);
-            builder.setTitle(R.string.deleteEventTitle);
-//            builder.setIcon(R.drawable.ic_warning_black_24dp);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibe.vibrate(VibrationEffect.createOneShot(50,
-                        VibrationEffect.DEFAULT_AMPLITUDE));
-            } else {
-                //deprecated in API 26
-                vibe.vibrate(50);
-            }
+            //creating a popup menu
+            PopupMenu popup = new PopupMenu(context, holder.deleteOption);
+            //inflating menu from xml resource
+            popup.inflate(R.menu.menu_event);
+            //adding click listener
+            popup.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.removeEvent:
+                        AlertDialog.Builder builder =
+                                new AlertDialog.Builder(v.getContext());
+                        builder.setMessage(R.string.deleteDialog);
+                        builder.setTitle(R.string.deleteEventTitle);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            vibe.vibrate(VibrationEffect.createOneShot(50,
+                                    VibrationEffect.DEFAULT_AMPLITUDE));
+                        } else {
+                            //deprecated in API 26
+                            vibe.vibrate(50);
+                        }
 
-            //not removing items if cancel is done
-            builder.setPositiveButton((R.string.remove),
-                    (dialog, which) -> {
-                        //code to delete event
-                        App.Constants.removeEvent(events.get(position).getId());
-                        dialog.dismiss();
-                    }).setNegativeButton((android.R.string.cancel),
-                    (dialog, which) -> dialog.dismiss()).show();
+                        //not removing items if cancel is done
+                        builder.setPositiveButton((R.string.remove),
+                                (dialog, which) -> {
+                                    //code to delete event
+                                    App.Constants.removeEvent(events.get(position).getId());
+                                    dialog.dismiss();
+                                }).setNegativeButton((android.R.string.cancel),
+                                (dialog, which) -> dialog.dismiss()).show();
+                        return true;
+                    default:
+                        return false;
+                }
+            });
+            //displaying the popup
+            popup.show();
         };
 
-        holder.deleteBtn.setOnClickListener(onClickDelete);
+        holder.deleteOption.setOnClickListener(onClickDelete);
+        holder.countdown.setOnClickListener(onClickDelete);
     }
 
     @Override

@@ -45,4 +45,6 @@
     <string name="delete_event_button">Delete event button</string>
     <string name="menu_refresh">Refresh</string>
     <string name="eventImageDesc">Event image</string>
+    <string name="card_menu">Card menu</string>
+    <string name="card_thumb">Event thumbnail image</string>
 </resources>
