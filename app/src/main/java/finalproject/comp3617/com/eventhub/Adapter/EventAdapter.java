@@ -37,7 +37,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         super.onAttachedToRecyclerView(recyclerView);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         TextView title;
         ImageView thumbImg;
         ImageView deleteOption;

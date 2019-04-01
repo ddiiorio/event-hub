@@ -50,12 +50,14 @@
             android:text="@string/addEventBlurb"
             style="@style/addEventDialog" />
 
-        <Button
+        <TextView
             android:id="@+id/newEventBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:padding="16dp"
+            android:textSize="18sp"
+            android:textColor="@color/button"
             style="@style/addEventDialog"
             android:text="@string/newEventBtn"/>
 

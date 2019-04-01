@@ -32,6 +32,7 @@ import finalproject.comp3617.com.eventhub.Adapter.EventSearchAdapter;
 
 public class EventSearchActivity extends AppCompatActivity {
     private static final String tmApiKey = "WMqw4xi5StCjkwj6c1ifQnxlmVuBGxDw";
+    private static final String TAG = "LOGTAG";
     private EditText citySearch;
     private String city, keyword;
     private DiscoveryApi discoveryApi;
@@ -39,7 +40,6 @@ public class EventSearchActivity extends AppCompatActivity {
     private ProgressDialog progDialog;
     protected DatabaseReference db;
     protected RecyclerView recyclerView;
-    private RecyclerView.Adapter myAdapter;
     protected List<Event> tmEvents;
 
     @Override
@@ -129,16 +129,17 @@ public class EventSearchActivity extends AppCompatActivity {
                 progDialog = null;
             }
             if (!events.isEmpty()) {
-                Log.i("LOGTAG", "events exist");
+                Log.i(TAG, "Events exist");
                 if (recyclerView.getVisibility() != View.VISIBLE) {
                     recyclerView.setVisibility(View.VISIBLE);
                     noResults.setVisibility(LinearLayout.GONE);
                 }
-                myAdapter = new EventSearchAdapter(EventSearchActivity.this, tmEvents);
+                RecyclerView.Adapter myAdapter =
+                        new EventSearchAdapter(EventSearchActivity.this, tmEvents);
                 recyclerView.setAdapter(myAdapter);
                 myAdapter.notifyDataSetChanged();
             } else {
-                Log.i("LOGTAG", "events don't exist");
+                Log.i(TAG, "Events don't exist");
                 if (recyclerView.getVisibility() != View.INVISIBLE) {
                     recyclerView.setVisibility(View.GONE);
                     noResults.setVisibility(LinearLayout.VISIBLE);
@@ -146,60 +147,6 @@ public class EventSearchActivity extends AppCompatActivity {
             }
         }
     }
-
-//    private void addEventDialog(final Event e) {
-//        AlertDialog.Builder builder =
-//                new AlertDialog.Builder(EventSearchActivity.this);
-//        builder.setMessage(getText(R.string.addEventDialog));
-//        builder.setTitle(R.string.addEventTitle);
-////        builder.setIcon(R.drawable.ic_add_box_black_24dp);
-//
-//        builder.setPositiveButton(getText(R.string.confirm), (dialog, which) -> {
-//            //code to add event
-//            finalproject.comp3617.com.eventhub.Model.Event event
-//                    = new finalproject.comp3617.com.eventhub.Model.Event();
-//            event.setTitle(e.getName());
-//            event.setCustomEvent(false);
-//            java.util.Date eventDate = App.Constants
-//                    .parseDate(e.getDates().getStart().getLocalDate());
-//            event.setEventDate(App.Constants.df.format(eventDate));
-//            event.setImgUrl(e.getImages().get(0).getUrl());
-//            event.setVenueName(e.getVenues().get(0).getName());
-//            event.setEventDateMillis(eventDate.getTime());
-//            String addy1 = e.getVenues().get(0).getAddress().getLine1();
-//            String addy2 = e.getVenues().get(0).getAddress().getLine2();
-//            if (addy2 != null) {
-//                event.setVenueAddress(addy1 + addy2);
-//            } else {
-//                event.setVenueAddress(addy1);
-//            }
-//            int eventHash = event.hashCode();
-//            event.setId(String.valueOf(eventHash));
-//            if (App.Constants.eventsAll.containsKey(event.getId())) {
-//                if (!eventsUser.contains(event)) {
-//                    eventsUser.add(event);
-//                    db.child("users/").child(App.Constants.currentUser.getUid()).child("events")
-//                            .child(event.getId()).setValue(true);
-//                    dialog.dismiss();
-//                    finish();
-//                } else {
-//                    dialog.dismiss();
-//                    String alreadyExists = R.string.alreadyExists;
-//                    Snackbar.make(findViewById(android.R.id.content),
-//                            alreadyExists, Snackbar.LENGTH_LONG).show();
-//                }
-//            } else {
-//                App.Constants.eventsAll.put(event.getId(), event);
-//                eventsUser.add(event);
-//                db.child("events").child(event.getId()).setValue(event);
-//                db.child("users/").child(App.Constants.currentUser.getUid()).child("events")
-//                        .child(event.getId()).setValue(true);
-//                dialog.dismiss();
-//                finish();
-//            }
-//        }).setNegativeButton(getText(android.R.string.cancel),
-//                (dialog, which) -> dialog.dismiss()).show();
-//    }
 
     @Override
     public boolean onSupportNavigateUp() {

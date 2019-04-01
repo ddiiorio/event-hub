@@ -20,8 +20,8 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -192,7 +192,7 @@ public class EventViewActivity extends AppCompatActivity {
         final Dialog dialog = new Dialog(this);
         dialog.setTitle(R.string.addEventTitle);
         dialog.setContentView(R.layout.add_task_dialog);
-        Button newEventBtn = dialog.findViewById(R.id.newEventBtn);
+        TextView newEventBtn = dialog.findViewById(R.id.newEventBtn);
         newEventTitle = dialog.findViewById(R.id.newEventTitle);
         newEventThumb = dialog.findViewById(R.id.newEventThumb);
         newEventTitle.requestFocus();
