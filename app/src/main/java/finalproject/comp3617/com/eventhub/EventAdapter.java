@@ -1,10 +1,14 @@
 package finalproject.comp3617.com.eventhub;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
+import android.os.VibrationEffect;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,18 +16,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import finalproject.comp3617.com.eventhub.Realm.Event;
-import io.realm.OrderedRealmCollection;
-import io.realm.RealmRecyclerViewAdapter;
-import io.realm.RealmResults;
+import finalproject.comp3617.com.eventhub.Model.Event;
 
-public class EventAdapter extends RealmRecyclerViewAdapter<Event, EventAdapter.ViewHolder> {
-    private RealmResults<Event> events;
+import static finalproject.comp3617.com.eventhub.App.Constants.vibe;
+
+public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
+    private ArrayList<Event> events;
+    private Context context;
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
@@ -33,6 +36,7 @@ public class EventAdapter extends RealmRecyclerViewAdapter<Event, EventAdapter.V
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView title;
         ImageView thumbImg;
+        ImageView deleteOption;
         TextView countdown;
         TextView eventDate;
         CardView cardView;
@@ -41,15 +45,16 @@ public class EventAdapter extends RealmRecyclerViewAdapter<Event, EventAdapter.V
             super(v);
             title = v.findViewById(R.id.title);
             thumbImg = v.findViewById(R.id.thumbImg);
+            deleteOption = v.findViewById(R.id.deleteOption);
             eventDate = v.findViewById(R.id.date);
             countdown = v.findViewById(R.id.countdown);
             cardView = v.findViewById(R.id.card_view);
         }
     }
 
-    EventAdapter(@Nullable OrderedRealmCollection<Event> data,
-                 boolean autoUpdate, RealmResults<Event> events) {
-        super(data, autoUpdate);
+    EventAdapter(Context context, ArrayList<Event> events) {
+        super();
+        this.context = context;
         this.events = events;
     }
 
@@ -66,12 +71,12 @@ public class EventAdapter extends RealmRecyclerViewAdapter<Event, EventAdapter.V
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final Event event = events.get(position);
         View.OnClickListener onClick;
+        View.OnClickListener onClickDelete;
         holder.title.setText(event.getTitle());
-        holder.eventDate.setText(new SimpleDateFormat("MMMM d yyyy")
-                .format(event.getEventDate()));
+        holder.eventDate.setText(event.getEventDate());
         String imageUrl = event.getImgUrl();
         ImageHelper.loadThumb(imageUrl, holder.thumbImg);
-        Date endDate = event.getEventDate();
+        Date endDate = App.Constants.parseFirebaseDate(event.getEventDate());
         long diff = endDate.getTime() - System.currentTimeMillis();
         double days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
         int x = (int) Math.round(days);
@@ -85,24 +90,57 @@ public class EventAdapter extends RealmRecyclerViewAdapter<Event, EventAdapter.V
             holder.countdown.setText(dayDiff);
         }
 
-        onClick = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent viewEvent = new Intent(v.getContext(), EventDetailsActivity.class);
-                viewEvent.putExtra("id", events.get(position).getId());
-                viewEvent.putExtra("title", holder.title.getText().toString());
-                viewEvent.putExtra("date", new SimpleDateFormat("EEE, d MMM yyyy",
-                        Locale.getDefault())
-                        .format(events.get(position).getEventDate()));
-                viewEvent.putExtra("image", events.get(position).getImgUrl());
-                viewEvent.putExtra("placeId", events.get(position).getPlaceId());
-                viewEvent.putExtra("venueName", events.get(position).getVenueName());
-                viewEvent.putExtra("venueAddress", events.get(position).getVenueAddress());
-                v.getContext().startActivity(viewEvent);
-            }
+        onClick = v -> {
+            Intent viewEvent = new Intent(v.getContext(), EventDetailsActivity.class);
+            viewEvent.putExtra("id", events.get(position).getId());
+            viewEvent.putExtra("placeId", events.get(position).getPlaceId());
+            viewEvent.putExtra("venueName", events.get(position).getVenueName());
+            viewEvent.putExtra("venueAddress", events.get(position).getVenueAddress());
+            v.getContext().startActivity(viewEvent);
         };
         holder.cardView.setOnClickListener(onClick);
         holder.thumbImg.setOnClickListener(onClick);
+
+        onClickDelete = v -> {
+            //creating a popup menu
+            PopupMenu popup = new PopupMenu(context, holder.deleteOption);
+            //inflating menu from xml resource
+            popup.inflate(R.menu.menu_event);
+            //adding click listener
+            popup.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.removeEvent:
+                        AlertDialog.Builder builder =
+                                new AlertDialog.Builder(v.getContext());
+                        builder.setMessage(R.string.deleteDialog);
+                        builder.setTitle(R.string.deleteEventTitle);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            vibe.vibrate(VibrationEffect.createOneShot(50,
+                                    VibrationEffect.DEFAULT_AMPLITUDE));
+                        } else {
+                            //deprecated in API 26
+                            vibe.vibrate(50);
+                        }
+
+                        //not removing items if cancel is done
+                        builder.setPositiveButton((R.string.remove),
+                                (dialog, which) -> {
+                                    //code to delete event
+                                    App.Constants.removeEvent(events.get(position).getId());
+                                    dialog.dismiss();
+                                }).setNegativeButton((android.R.string.cancel),
+                                (dialog, which) -> dialog.dismiss()).show();
+                        return true;
+                    default:
+                        return false;
+                }
+            });
+            //displaying the popup
+            popup.show();
+        };
+
+        holder.deleteOption.setOnClickListener(onClickDelete);
+        holder.countdown.setOnClickListener(onClickDelete);
     }
 
     @Override

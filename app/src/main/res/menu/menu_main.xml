@@ -4,6 +4,10 @@
     tools:context="finalproject.comp3617.com.eventbuddy.EventViewActivity">
 
     <item
+        android:id="@+id/menu_refresh"
+        app:showAsAction="never"
+        android:title="@string/menu_refresh"/>
+    <item
         android:id="@+id/signOut"
         android:title="@string/signOut"
         app:showAsAction="never"/>
