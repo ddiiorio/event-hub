@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import finalproject.comp3617.com.eventhub.Adapter.EventAdapter;
 import finalproject.comp3617.com.eventhub.Model.Event;
 
 import static finalproject.comp3617.com.eventhub.App.Constants.eventsAll;

@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".EventSearchActivity"
+    android:id="@+id/searchContent"
     android:background="@color/eventDetailsBackground">
 
     <android.support.design.widget.AppBarLayout
@@ -78,7 +79,7 @@
         android:layout_height="wrap_content"
         card_view:cardElevation="12dp"
         card_view:cardCornerRadius="1dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/search_margin"
         android:layout_margin="@dimen/search_margin"
         app:cardBackgroundColor="@android:color/white">
 
@@ -97,109 +98,19 @@
                 android:textSize="16sp"
                 android:layout_marginBottom="16dp" />
 
-            <LinearLayout
-                android:id="@+id/searchResult0"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/searchResultsRecyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginBottom="12dp">
+                android:clipToPadding="false"
+                android:scrollbars="vertical" />
 
-                <TextView
-                    android:id="@+id/resultTitle0"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    style="@style/searchResultTitle" />
-
-                <TextView
-                    android:id="@+id/resultVenue0"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:textSize="18sp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp" />
-
-                <TextView
-                    android:id="@+id/resultDate0"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="18sp" />
-
-            </LinearLayout>
-
-            <View
-                android:id="@+id/linebreak0"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginBottom="6dp"
-                android:background="@color/colorPrimary"/>
-
-            <LinearLayout
-                android:id="@+id/searchResult1"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/noResultsMsg"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginBottom="12dp">
-
-                <TextView
-                    android:id="@+id/resultTitle1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    style="@style/searchResultTitle" />
-
-                <TextView
-                    android:id="@+id/resultVenue1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:textSize="18sp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp" />
-
-                <TextView
-                    android:id="@+id/resultDate1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="18sp" />
-
-            </LinearLayout>
-
-            <View
-                android:id="@+id/linebreak1"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginBottom="6dp"
-                android:background="@color/colorPrimary"/>
-
-            <LinearLayout
-                android:id="@+id/searchResult2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginBottom="12dp">
-
-                <TextView
-                    android:id="@+id/resultTitle2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    style="@style/searchResultTitle" />
-
-                <TextView
-                    android:id="@+id/resultVenue2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:textSize="18sp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp" />
-
-                <TextView
-                    android:id="@+id/resultDate2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="18sp" />
-
-            </LinearLayout>
+                android:visibility="gone"
+                android:text="@string/noResultMsg" />
 
             <ImageView
                 android:id="@+id/ticketmasterLogo"

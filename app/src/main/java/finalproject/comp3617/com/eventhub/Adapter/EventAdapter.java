@@ -1,4 +1,4 @@
-package finalproject.comp3617.com.eventhub;
+package finalproject.comp3617.com.eventhub.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,7 +20,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import finalproject.comp3617.com.eventhub.App;
+import finalproject.comp3617.com.eventhub.EventDetailsActivity;
+import finalproject.comp3617.com.eventhub.ImageHelper;
 import finalproject.comp3617.com.eventhub.Model.Event;
+import finalproject.comp3617.com.eventhub.R;
 
 import static finalproject.comp3617.com.eventhub.App.Constants.vibe;
 
@@ -33,7 +37,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         super.onAttachedToRecyclerView(recyclerView);
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView title;
         ImageView thumbImg;
         ImageView deleteOption;
@@ -52,7 +56,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         }
     }
 
-    EventAdapter(Context context, ArrayList<Event> events) {
+    public EventAdapter(Context context, ArrayList<Event> events) {
         super();
         this.context = context;
         this.events = events;

@@ -37,7 +37,7 @@ public class App extends Application {
         private static String pattern = "MMMM d yyyy";
         public static DateFormat df = new SimpleDateFormat(pattern, Locale.getDefault());
 
-        protected static java.util.Date parseDate(String date) {
+        public static java.util.Date parseDate(String date) {
             try {
                 return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(date);
             } catch (ParseException e) {
@@ -45,7 +45,7 @@ public class App extends Application {
             }
         }
 
-        protected static java.util.Date parseFirebaseDate(String date) {
+        public static java.util.Date parseFirebaseDate(String date) {
             try {
                 return new SimpleDateFormat(pattern, Locale.CANADA).parse(date);
             } catch (ParseException e) {
