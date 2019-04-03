@@ -1,14 +1,13 @@
-package finalproject.comp3617.com.eventhub.Firebase;
+package com.dannydiiorio.eventhub.Firebase;
 
+import com.dannydiiorio.eventhub.App;
+import com.dannydiiorio.eventhub.Model.Event;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import finalproject.comp3617.com.eventhub.App;
-import finalproject.comp3617.com.eventhub.Model.Event;
 
 /**
  * Created by Danny Di Iorio

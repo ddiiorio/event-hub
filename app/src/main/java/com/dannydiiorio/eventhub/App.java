@@ -1,9 +1,10 @@
-package finalproject.comp3617.com.eventhub;
+package com.dannydiiorio.eventhub;
 
 import android.app.Application;
 import android.net.Uri;
 import android.os.Vibrator;
 
+import com.dannydiiorio.eventhub.Model.Event;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -16,8 +17,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
-
-import finalproject.comp3617.com.eventhub.Model.Event;
 
 public class App extends Application {
 

@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "finalproject.comp3617.com.eventhub"
+        applicationId "com.dannydiiorio.eventhub"
         minSdkVersion 24
         targetSdkVersion 28
         versionCode 1

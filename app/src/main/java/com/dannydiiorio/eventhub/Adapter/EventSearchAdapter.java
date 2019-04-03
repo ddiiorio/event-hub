@@ -1,4 +1,4 @@
-package finalproject.comp3617.com.eventhub.Adapter;
+package com.dannydiiorio.eventhub.Adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -12,17 +12,16 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.dannydiiorio.eventhub.App;
+import com.dannydiiorio.eventhub.EventSearchActivity;
+import com.dannydiiorio.eventhub.R;
 import com.google.firebase.database.DatabaseReference;
 import com.ticketmaster.discovery.model.Event;
 import com.ticketmaster.discovery.model.Venue;
 
 import java.util.List;
 
-import finalproject.comp3617.com.eventhub.App;
-import finalproject.comp3617.com.eventhub.EventSearchActivity;
-import finalproject.comp3617.com.eventhub.R;
-
-import static finalproject.comp3617.com.eventhub.App.Constants.eventsUser;
+import static com.dannydiiorio.eventhub.App.Constants.eventsUser;
 
 public class EventSearchAdapter extends RecyclerView.Adapter<EventSearchAdapter.ViewHolder> {
     private List<Event> events;
@@ -94,8 +93,8 @@ public class EventSearchAdapter extends RecyclerView.Adapter<EventSearchAdapter.
 
         builder.setPositiveButton(R.string.confirm, (dialog, which) -> {
             //code to add event
-            finalproject.comp3617.com.eventhub.Model.Event event
-                    = new finalproject.comp3617.com.eventhub.Model.Event();
+            com.dannydiiorio.eventhub.Model.Event event
+                    = new com.dannydiiorio.eventhub.Model.Event();
             event.setTitle(e.getName());
             event.setCustomEvent(false);
             java.util.Date eventDate = App.Constants

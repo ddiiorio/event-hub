@@ -1,4 +1,4 @@
-package finalproject.comp3617.com.eventhub;
+package com.dannydiiorio.eventhub;
 
 import android.widget.ImageView;
 
