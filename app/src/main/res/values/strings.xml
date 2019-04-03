@@ -6,7 +6,7 @@
     <string name="eventTitle">Event title</string>
     <string name="dateBtn">Add Date</string>
     <string name="addEventBlurb">After adding the event, tap on it to add more details!</string>
-    <string name="newEventBtn">Save Event</string>
+    <string name="newEventBtn">SAVE EVENT</string>
     <string name="newEventError">New event must contain a title</string>
     <string name="signIn">Sign In</string>
     <string name="signOut">Sign Out</string>

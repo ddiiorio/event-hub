@@ -1,4 +1,4 @@
-package finalproject.comp3617.com.eventhub;
+package com.dannydiiorio.eventhub;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -20,10 +20,12 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dannydiiorio.eventhub.Adapter.EventAdapter;
+import com.dannydiiorio.eventhub.Model.Event;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,10 +40,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import finalproject.comp3617.com.eventhub.Model.Event;
 
-import static finalproject.comp3617.com.eventhub.App.Constants.eventsAll;
-import static finalproject.comp3617.com.eventhub.App.Constants.eventsUser;
+import static com.dannydiiorio.eventhub.App.Constants.eventsAll;
+import static com.dannydiiorio.eventhub.App.Constants.eventsUser;
 
 public class EventViewActivity extends AppCompatActivity {
     private static final String TAG = "LOGTAG";
@@ -191,7 +192,7 @@ public class EventViewActivity extends AppCompatActivity {
         final Dialog dialog = new Dialog(this);
         dialog.setTitle(R.string.addEventTitle);
         dialog.setContentView(R.layout.add_task_dialog);
-        Button newEventBtn = dialog.findViewById(R.id.newEventBtn);
+        TextView newEventBtn = dialog.findViewById(R.id.newEventBtn);
         newEventTitle = dialog.findViewById(R.id.newEventTitle);
         newEventThumb = dialog.findViewById(R.id.newEventThumb);
         newEventTitle.requestFocus();

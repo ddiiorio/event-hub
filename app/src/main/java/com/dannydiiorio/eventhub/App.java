@@ -1,9 +1,10 @@
-package finalproject.comp3617.com.eventhub;
+package com.dannydiiorio.eventhub;
 
 import android.app.Application;
 import android.net.Uri;
 import android.os.Vibrator;
 
+import com.dannydiiorio.eventhub.Model.Event;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -16,8 +17,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
-
-import finalproject.comp3617.com.eventhub.Model.Event;
 
 public class App extends Application {
 
@@ -37,7 +36,7 @@ public class App extends Application {
         private static String pattern = "MMMM d yyyy";
         public static DateFormat df = new SimpleDateFormat(pattern, Locale.getDefault());
 
-        protected static java.util.Date parseDate(String date) {
+        public static java.util.Date parseDate(String date) {
             try {
                 return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(date);
             } catch (ParseException e) {
@@ -45,7 +44,7 @@ public class App extends Application {
             }
         }
 
-        protected static java.util.Date parseFirebaseDate(String date) {
+        public static java.util.Date parseFirebaseDate(String date) {
             try {
                 return new SimpleDateFormat(pattern, Locale.CANADA).parse(date);
             } catch (ParseException e) {
