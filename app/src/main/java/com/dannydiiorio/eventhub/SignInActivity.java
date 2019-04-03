@@ -66,6 +66,8 @@ public class SignInActivity extends AppCompatActivity {
             } catch (ApiException e) {
                 Log.w(TAG, "Google sign in failed", e);
             }
+        } else {
+            progressBar.setVisibility(View.INVISIBLE);
         }
     }
 
