@@ -1,4 +1,4 @@
-package finalproject.comp3617.com.eventhub.Model;
+package com.dannydiiorio.eventhub.Model;
 
 import java.io.Serializable;
 import java.util.Objects;

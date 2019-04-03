@@ -1,4 +1,4 @@
-package finalproject.comp3617.com.eventhub;
+package com.dannydiiorio.eventhub;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.dannydiiorio.eventhub.Adapter.EventSearchAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.squareup.picasso.Picasso;
 import com.ticketmaster.api.discovery.DiscoveryApi;
@@ -28,7 +29,6 @@ import java.util.Collections;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import finalproject.comp3617.com.eventhub.Adapter.EventSearchAdapter;
 
 public class EventSearchActivity extends AppCompatActivity {
     private static final String tmApiKey = "WMqw4xi5StCjkwj6c1ifQnxlmVuBGxDw";

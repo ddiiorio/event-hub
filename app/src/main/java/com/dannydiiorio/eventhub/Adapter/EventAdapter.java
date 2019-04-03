@@ -1,4 +1,4 @@
-package finalproject.comp3617.com.eventhub.Adapter;
+package com.dannydiiorio.eventhub.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,17 +16,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.dannydiiorio.eventhub.App;
+import com.dannydiiorio.eventhub.EventDetailsActivity;
+import com.dannydiiorio.eventhub.ImageHelper;
+import com.dannydiiorio.eventhub.Model.Event;
+import com.dannydiiorio.eventhub.R;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import finalproject.comp3617.com.eventhub.App;
-import finalproject.comp3617.com.eventhub.EventDetailsActivity;
-import finalproject.comp3617.com.eventhub.ImageHelper;
-import finalproject.comp3617.com.eventhub.Model.Event;
-import finalproject.comp3617.com.eventhub.R;
-
-import static finalproject.comp3617.com.eventhub.App.Constants.vibe;
+import static com.dannydiiorio.eventhub.App.Constants.vibe;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
     private ArrayList<Event> events;

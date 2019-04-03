@@ -1,4 +1,4 @@
-package finalproject.comp3617.com.eventhub;
+package com.dannydiiorio.eventhub;
 
 import android.Manifest;
 import android.content.Intent;
@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.dannydiiorio.eventhub.Model.Event;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.GeoDataClient;
@@ -32,10 +33,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import finalproject.comp3617.com.eventhub.Model.Event;
 
-import static finalproject.comp3617.com.eventhub.App.Constants.eventsAll;
-import static finalproject.comp3617.com.eventhub.App.Constants.eventsUser;
+import static com.dannydiiorio.eventhub.App.Constants.eventsAll;
+import static com.dannydiiorio.eventhub.App.Constants.eventsUser;
 
 public class EventDetailsActivity extends AppCompatActivity {
     private static final int PLACE_PICKER_REQUEST = 1;

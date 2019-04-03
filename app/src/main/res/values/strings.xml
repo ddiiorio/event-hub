@@ -47,4 +47,5 @@
     <string name="eventImageDesc">Event image</string>
     <string name="card_menu">Card menu</string>
     <string name="card_thumb">Event thumbnail image</string>
+    <string name="default_web_client_id">123658325808-cgvlkjucvt300tni8mlj46c6illo205a.apps.googleusercontent.com</string>
 </resources>

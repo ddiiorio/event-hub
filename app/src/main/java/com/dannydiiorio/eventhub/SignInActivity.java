@@ -1,4 +1,4 @@
-package finalproject.comp3617.com.eventhub;
+package com.dannydiiorio.eventhub;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -19,8 +19,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-import finalproject.comp3617.com.eventhub.Firebase.FirebaseClient;
-
+import com.dannydiiorio.eventhub.Firebase.FirebaseClient;
 
 public class SignInActivity extends AppCompatActivity {
     private static final String FLAG = "FLAG";
@@ -46,18 +45,6 @@ public class SignInActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
     }
-
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-//        if (account != null) {
-//            App.Constants.currentUser = mAuth.getCurrentUser();
-//            Intent intent = new Intent(this, EventViewActivity.class);
-//            finish();
-//            startActivity(intent);
-//        }
-//    }
 
     private void signIn() {
         progressBar.setVisibility(View.VISIBLE);

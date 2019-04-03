@@ -1,4 +1,4 @@
-package finalproject.comp3617.com.eventhub;
+package com.dannydiiorio.eventhub;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -24,6 +24,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dannydiiorio.eventhub.Adapter.EventAdapter;
+import com.dannydiiorio.eventhub.Model.Event;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,11 +40,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import finalproject.comp3617.com.eventhub.Adapter.EventAdapter;
-import finalproject.comp3617.com.eventhub.Model.Event;
 
-import static finalproject.comp3617.com.eventhub.App.Constants.eventsAll;
-import static finalproject.comp3617.com.eventhub.App.Constants.eventsUser;
+import static com.dannydiiorio.eventhub.App.Constants.eventsAll;
+import static com.dannydiiorio.eventhub.App.Constants.eventsUser;
 
 public class EventViewActivity extends AppCompatActivity {
     private static final String TAG = "LOGTAG";
