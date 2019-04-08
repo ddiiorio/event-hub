@@ -4,8 +4,11 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -22,7 +25,6 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dannydiiorio.eventhub.Adapter.EventAdapter;
 import com.dannydiiorio.eventhub.Model.Event;
@@ -81,13 +83,13 @@ public class EventViewActivity extends AppCompatActivity {
                     .placeholder(R.drawable.empty_profile)
                     .into(profile);
 
+            checkNetworkConnection(getApplicationContext());
+
             // This method performs the actual data-refresh operation.
-// The method calls setRefreshing(false) when it's finished.
+            // The method calls setRefreshing(false) when it's finished.
             mSwipeRefreshLayout.setOnRefreshListener(
                     this::setupFirebaseEvents
             );
-
-            setupFirebaseEvents();
             setupFab();
 
             recyclerView = findViewById(R.id.recycler_view);
@@ -96,6 +98,26 @@ public class EventViewActivity extends AppCompatActivity {
             recyclerView.addItemDecoration(new GridSpacingItemDecoration(2,
                     dpToPx(10), true));
             recyclerView.setItemAnimator(new DefaultItemAnimator());
+        }
+    }
+
+    /**
+     * Determine device connectivity status and show message if it is not connected to the
+     * internet
+     * @param context application context
+     */
+    private void checkNetworkConnection(Context context) {
+        ConnectivityManager cm =
+                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        if (isConnected) {
+            setupFirebaseEvents();
+        } else {
+            mSwipeRefreshLayout.setRefreshing(false);
+            Snackbar.make(findViewById(R.id.eventContent),
+                    R.string.noInternetMsg, Snackbar.LENGTH_LONG).show();
         }
     }
 
@@ -119,7 +141,7 @@ public class EventViewActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {}
         });
 
-        dbUserEvents.addValueEventListener(new ValueEventListener() {
+        new Handler().postDelayed(() -> dbUserEvents.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 eventsUser = new ArrayList<>();
@@ -134,7 +156,8 @@ public class EventViewActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {}
-        });
+        }), 1500);
+
     }
 
     protected void setupFab() {
@@ -167,10 +190,7 @@ public class EventViewActivity extends AppCompatActivity {
                 logout();
                 return true;
             case R.id.menu_refresh:
-                // Start the refresh background task.
-                // This method calls setRefreshing(false) when it's finished.
                 setupFirebaseEvents();
-
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -215,8 +235,8 @@ public class EventViewActivity extends AppCompatActivity {
                 Snackbar.make(findViewById(android.R.id.content),
                         eventAddConfirm, Snackbar.LENGTH_LONG).show();
             } else {
-                Toast.makeText(EventViewActivity.this,
-                        errorMsg, Toast.LENGTH_LONG).show();
+                Snackbar.make(findViewById(android.R.id.content),
+                        errorMsg, Snackbar.LENGTH_LONG).show();
             }
         });
         dialog.show();

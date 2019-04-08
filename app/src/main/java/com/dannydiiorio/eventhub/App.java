@@ -60,7 +60,11 @@ public class App extends Application {
         public static class EventComparator implements Comparator<Event> {
             @Override
             public int compare(Event o1, Event o2) {
-                return Long.compare(o1.getEventDateMillis(), o2.getEventDateMillis());
+                if (o1 != null && o2 != null) {
+                    return Long.compare(o1.getEventDateMillis(), o2.getEventDateMillis());
+                } else {
+                    return 0;
+                }
             }
         }
     }
