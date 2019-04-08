@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -129,7 +128,6 @@ public class EventSearchActivity extends AppCompatActivity {
                 progDialog = null;
             }
             if (!events.isEmpty()) {
-                Log.i(TAG, "Events exist");
                 if (recyclerView.getVisibility() != View.VISIBLE) {
                     recyclerView.setVisibility(View.VISIBLE);
                     noResults.setVisibility(LinearLayout.GONE);
@@ -139,7 +137,6 @@ public class EventSearchActivity extends AppCompatActivity {
                 recyclerView.setAdapter(myAdapter);
                 myAdapter.notifyDataSetChanged();
             } else {
-                Log.i(TAG, "Events don't exist");
                 if (recyclerView.getVisibility() != View.INVISIBLE) {
                     recyclerView.setVisibility(View.GONE);
                     noResults.setVisibility(LinearLayout.VISIBLE);

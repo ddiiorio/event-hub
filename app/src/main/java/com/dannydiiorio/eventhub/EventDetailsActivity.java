@@ -105,10 +105,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                                     Place myPlace = places.get(0);
                                     eventVenue.setText(myPlace.getName());
                                     venueAddress.setText(myPlace.getAddress());
-                                    Log.i(TAG, "Place found: " + myPlace.getName());
                                     places.release();
-                                } else {
-                                    Log.e(TAG, "Place not found.");
                                 }
                             });
                 }
@@ -197,7 +194,6 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     protected void saveEvent() {
-        Log.d(TAG, String.valueOf(eventsUser.indexOf(current)));
         eventsUser.set(currentIndex, current);
         eventsAll.put(id, current);
         Map<String, Object> update = new HashMap<>();

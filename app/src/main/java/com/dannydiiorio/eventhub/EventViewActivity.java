@@ -69,7 +69,6 @@ public class EventViewActivity extends AppCompatActivity {
             Log.w(TAG, "No User");
         } else {
             Log.w(TAG, "User exists");
-            Log.w(TAG, FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
             App.Constants.profileImage = Uri.parse(FirebaseAuth.getInstance()
                     .getCurrentUser().getPhotoUrl().toString());
             App.Constants.currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -82,14 +81,10 @@ public class EventViewActivity extends AppCompatActivity {
                     .placeholder(R.drawable.empty_profile)
                     .into(profile);
 
+            // This method performs the actual data-refresh operation.
+// The method calls setRefreshing(false) when it's finished.
             mSwipeRefreshLayout.setOnRefreshListener(
-                    () -> {
-                        Log.i(TAG, "onRefresh called from SwipeRefreshLayout");
-
-                        // This method performs the actual data-refresh operation.
-                        // The method calls setRefreshing(false) when it's finished.
-                        setupFirebaseEvents();
-                    }
+                    this::setupFirebaseEvents
             );
 
             setupFirebaseEvents();
@@ -172,8 +167,6 @@ public class EventViewActivity extends AppCompatActivity {
                 logout();
                 return true;
             case R.id.menu_refresh:
-                Log.i(TAG, "Refresh menu item selected");
-
                 // Start the refresh background task.
                 // This method calls setRefreshing(false) when it's finished.
                 setupFirebaseEvents();
@@ -252,13 +245,11 @@ public class EventViewActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        Log.d(TAG, "onDestroy");
         super.onDestroy();
     }
 
     @Override
     protected void onRestart() {
-        Log.d(TAG, "onRestart");
         super.onRestart();
         myAdapter.notifyDataSetChanged();
     }

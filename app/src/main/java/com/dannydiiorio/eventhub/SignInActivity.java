@@ -72,8 +72,6 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
-
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
@@ -84,7 +82,6 @@ public class SignInActivity extends AppCompatActivity {
                         }
                         progressBar.setVisibility(View.INVISIBLE);
                         // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "signInWithCredential:success");
                         App.Constants.currentUser = mAuth.getCurrentUser();
                         App.Constants.profileImage = Uri.parse(
                                 App.Constants.currentUser.getPhotoUrl().toString());
@@ -95,7 +92,6 @@ public class SignInActivity extends AppCompatActivity {
                     } else {
                         progressBar.setVisibility(View.INVISIBLE);
                         // If sign in fails, display a message to the user.
-                        Log.w(TAG, "signInWithCredential:failure", task.getException());
                         Snackbar.make(findViewById(R.id.signInContent), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
                     }
                 });
