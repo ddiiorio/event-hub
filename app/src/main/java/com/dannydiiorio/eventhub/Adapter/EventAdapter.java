@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import com.dannydiiorio.eventhub.App;
 import com.dannydiiorio.eventhub.EventDetailsActivity;
+import com.dannydiiorio.eventhub.EventViewActivity;
 import com.dannydiiorio.eventhub.ImageHelper;
 import com.dannydiiorio.eventhub.Model.Event;
 import com.dannydiiorio.eventhub.R;
@@ -132,6 +134,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
                                     //code to delete event
                                     App.Constants.removeEvent(events.get(position).getId());
                                     dialog.dismiss();
+                                    Snackbar.make(((EventViewActivity)context).findViewById(R.id.eventContent),
+                                            R.string.removed, Snackbar.LENGTH_LONG).show();
                                 }).setNegativeButton((android.R.string.cancel),
                                 (dialog, which) -> dialog.dismiss()).show();
                         return true;
