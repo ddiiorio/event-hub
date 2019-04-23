@@ -4,14 +4,18 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -36,6 +40,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.dannydiiorio.eventhub.App.Constants.eventsAll;
 import static com.dannydiiorio.eventhub.App.Constants.eventsUser;
+import static com.dannydiiorio.eventhub.App.Constants.vibe;
 
 public class EventDetailsActivity extends AppCompatActivity {
     private static final int PLACE_PICKER_REQUEST = 1;
@@ -48,6 +53,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     private TextView eventDate;
     private TextView openMapsText;
     private ImageView eventImage, tmLogo;
+    private Button deleteBtn;
     private String id = null;
     private boolean isCustom;
     protected GeoDataClient mGeoDataClient;
@@ -79,6 +85,8 @@ public class EventDetailsActivity extends AppCompatActivity {
         eventVenue = findViewById(R.id.venueTxt);
         venueAddress = findViewById(R.id.venueAddress);
         openMapsText = findViewById(R.id.openMapsText);
+        deleteBtn = findViewById(R.id.deleteBtn);
+
         db = App.Constants.database.child("events");
 
         getIntentData();
@@ -121,7 +129,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     private void setupListeners() {
         if (isCustom) {
-            tmLogo.setVisibility(View.INVISIBLE);
+            tmLogo.setVisibility(View.GONE);
             eventVenue.setOnClickListener(v -> {
                 LatLng neCorner = new LatLng(LAT, LON); //49.316054, -123.026416
                 LatLng swCorner = new LatLng(LAT-0.0976, LON-0.1888);
@@ -148,8 +156,29 @@ public class EventDetailsActivity extends AppCompatActivity {
             eventDate.setOnClickListener(this::showDatePickerDialog);
         }
 
-//        backBtn.setOnClickListener(v -> finish());
         openMapsText.setOnClickListener(v -> launchGoogleMaps());
+        deleteBtn.setOnClickListener((View v) -> {
+            AlertDialog.Builder builder =
+                    new AlertDialog.Builder(v.getContext());
+            builder.setMessage(R.string.deleteDialog);
+            builder.setTitle(R.string.deleteEventTitle);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibe.vibrate(VibrationEffect.createOneShot(50,
+                        VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
+                //deprecated in API 26
+                vibe.vibrate(50);
+            }
+
+            builder.setPositiveButton((R.string.remove),
+                    (dialog, which) -> {
+                        //code to delete event
+                        App.Constants.removeEvent(id);
+                        dialog.dismiss();
+                        finish();
+                    }).setNegativeButton((android.R.string.cancel),
+                    (dialog, which) -> dialog.dismiss()).show();
+        });
     }
 
 

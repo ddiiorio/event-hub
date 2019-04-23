@@ -17,15 +17,13 @@
         android:scaleType="centerCrop"
         android:contentDescription="@string/signInBgDescription" />
 
-    <TextView
+    <ImageView
         android:id="@+id/appName"
-        android:layout_width="wrap_content"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:textColor="#000000"
-        android:textSize="30sp"
+        android:src="@drawable/splash"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="60dp"/>
+        android:layout_marginTop="30dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"

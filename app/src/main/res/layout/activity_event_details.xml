@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/eventDetailsBackground">
+    android:background="@color/eventDetailsBackground"
+    android:id="@+id/eventDetails">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -113,7 +114,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="16dp"
                 android:id="@+id/venueDetails">
@@ -126,7 +127,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical">
 
                     <TextView
@@ -140,11 +141,14 @@
 
                     <TextView
                         android:id="@+id/venueAddress"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
+                        android:maxLines="2"
+                        android:minWidth="@dimen/activity_horizontal_margin"
                         android:textColor="@android:color/black"
                         android:layout_marginTop="8dp"
+                        android:layout_marginBottom="@dimen/delete_margin"
                         android:text=""/>
 
                 </LinearLayout>
@@ -169,20 +173,42 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
+                    android:textFontWeight="400"
                     android:paddingBottom="@dimen/search_margin"
                     android:textColor="@android:color/black"
                     android:text="@string/openMaps"/>
 
             </LinearLayout>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
             <ImageView
                 android:id="@+id/ticketmasterLogo"
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="20dp"
-                android:src="@drawable/ticketmaster_blue_png"/>
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="@dimen/search_margin"
+                android:src="@drawable/ticketmaster_blue_png" />
 
+            <Button
+                android:id="@+id/deleteBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="@dimen/search_margin"
+                android:background="@drawable/my_button_red"
+                android:drawableStart="@drawable/ic_delete_red_24dp"
+                android:padding="@dimen/search_margin"
+                android:text="@string/deleteEventTitle"
+                android:textColor="@android:color/holo_red_light" />
+
+        </RelativeLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>

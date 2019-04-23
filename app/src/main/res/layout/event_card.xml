@@ -76,7 +76,8 @@
                     android:id="@+id/deleteOption"
                     android:layout_width="wrap_content"
                     android:layout_height="12dp"
-                    android:layout_gravity="center_vertical"
+                    android:layout_gravity="center_horizontal|top"
+                    android:layout_marginTop="@dimen/search_margin"
                     android:contentDescription="@string/card_menu"
                     android:src="@drawable/ic_dots"/>
             </LinearLayout>
