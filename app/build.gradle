@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.dannydiiorio.eventhub"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 4
         versionName "2.0.3"
@@ -13,6 +13,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -41,8 +42,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.google.firebase:firebase-auth:16.2.0'
     implementation 'com.google.firebase:firebase-database:16.0.3'
-    implementation 'io.realm:android-adapters:3.0.0'
-    implementation 'com.ticketmaster.api:discovery-java:0.1.6'
+    implementation 'com.ticketmaster.api:discovery-java:0.1.8'
     implementation 'com.github.clans:fab:1.6.4'
     implementation 'com.shobhitpuri.custombuttons:google-signin:1.0.0'
     implementation 'de.hdodenhof:circleimageview:3.0.0'
