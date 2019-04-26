@@ -19,8 +19,7 @@ import com.squareup.picasso.Picasso;
 import com.ticketmaster.api.discovery.DiscoveryApi;
 import com.ticketmaster.api.discovery.operation.SearchEventsOperation;
 import com.ticketmaster.api.discovery.response.PagedResponse;
-import com.ticketmaster.discovery.model.Event;
-import com.ticketmaster.discovery.model.Events;
+import com.ticketmaster.discovery.model.*;
 
 import java.io.IOException;
 import java.util.ArrayList;

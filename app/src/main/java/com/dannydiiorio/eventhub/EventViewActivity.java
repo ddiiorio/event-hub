@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -23,8 +24,8 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.dannydiiorio.eventhub.Adapter.EventAdapter;
 import com.dannydiiorio.eventhub.Model.Event;
@@ -148,7 +149,9 @@ public class EventViewActivity extends AppCompatActivity {
                 for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()) {
                     eventsUser.add(eventsAll.get(dataSnapshot1.getKey()));
                 }
-                eventsUser.sort(new App.Constants.EventComparator());
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                    eventsUser.sort(new App.Constants.EventComparator());
+                }
                 mSwipeRefreshLayout.setRefreshing(false);
                 myAdapter = new EventAdapter(EventViewActivity.this, eventsUser);
                 recyclerView.setAdapter(myAdapter);
@@ -205,7 +208,7 @@ public class EventViewActivity extends AppCompatActivity {
         final Dialog dialog = new Dialog(this);
         dialog.setTitle(R.string.addEventTitle);
         dialog.setContentView(R.layout.add_task_dialog);
-        TextView newEventBtn = dialog.findViewById(R.id.newEventBtn);
+        Button newEventBtn = dialog.findViewById(R.id.newEventBtn);
         newEventTitle = dialog.findViewById(R.id.newEventTitle);
         newEventThumb = dialog.findViewById(R.id.newEventThumb);
         newEventTitle.requestFocus();
@@ -213,7 +216,8 @@ public class EventViewActivity extends AppCompatActivity {
         newEventBtn.setOnClickListener(v -> {
             String errorMsg = getResources().getString(R.string.newEventError);
             String title = newEventTitle.getText().toString();
-            String url = newEventThumb.getText().toString();
+            String url = newEventThumb.getText().toString().length() > 0
+                    ? newEventThumb.getText().toString() : ImageHelper.getRandomPlaceholder();
 
             if (title.length() > 0) {
                 Event event = new Event();

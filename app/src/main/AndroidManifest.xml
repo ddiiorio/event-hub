@@ -41,7 +41,7 @@
             android:name=".EventDetailsActivity"
             android:screenOrientation="portrait"
             android:parentActivityName=".EventViewActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".EventSearchActivity"
             android:screenOrientation="portrait"

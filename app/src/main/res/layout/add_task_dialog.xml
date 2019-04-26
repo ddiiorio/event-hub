@@ -50,16 +50,19 @@
             android:text="@string/addEventBlurb"
             style="@style/addEventDialog" />
 
-        <TextView
+        <Button
             android:id="@+id/newEventBtn"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:padding="16dp"
-            android:textSize="18sp"
+            android:layout_height="40dp"
+            android:text="@string/newEventBtn"
+            android:textSize="16sp"
             android:textColor="@color/button"
-            style="@style/addEventDialog"
-            android:text="@string/newEventBtn"/>
+            android:background="@drawable/my_button"
+            android:padding="@dimen/search_margin"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:drawableStart="@drawable/ic_save_green_24dp"/>
 
     </LinearLayout>
 

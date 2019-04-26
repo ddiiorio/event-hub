@@ -6,14 +6,14 @@
     <string name="eventTitle">Event title</string>
     <string name="dateBtn">Add Date</string>
     <string name="addEventBlurb">After adding the event, tap on it to add more details!</string>
-    <string name="newEventBtn">SAVE EVENT</string>
+    <string name="newEventBtn"> SAVE EVENT</string>
     <string name="newEventError">New event must contain a title</string>
     <string name="signIn">Sign In</string>
     <string name="signOut">Sign Out</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="remove">REMOVE</string>
-    <string name="removed">Event removed</string>
+    <string name="remove">DELETE</string>
+    <string name="removed">Event deleted</string>
     <string name="confirm">Confirm</string>
     <string name="deleteDialog">Are you sure you want to delete this event?</string>
     <string name="addEventDialog">Are you sure you want to add this event?</string>
