@@ -52,19 +52,36 @@
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <EditText
-        android:id="@+id/citySearch"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:maxLength="30"
-        android:lines="1"
-        android:singleLine="true"
-        android:inputType="textCapWords"
-        android:hint="@string/enterCity"
-        android:textColor="@color/black"
-        android:paddingEnd="@dimen/search_margin"
-        android:paddingStart="@dimen/search_margin"/>
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/citySearch"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="4"
+            android:maxLines="1"
+            android:maxLength="30"
+            android:lines="1"
+            android:singleLine="true"
+            android:inputType="textCapWords"
+            android:hint="@string/enterCity"
+            android:textColor="@color/black"
+            android:paddingEnd="@dimen/search_margin"
+            android:paddingStart="@dimen/search_margin"/>
+
+        <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+            android:id="@+id/eventType"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="3"
+            android:hint="@string/eventType"
+            android:textColor="@color/black"
+            app:met_floatingLabel="highlight" />
+
+    </LinearLayout>
 
     <SearchView
         android:id="@+id/keywordSearch"
@@ -84,7 +101,6 @@
         app:cardBackgroundColor="@android:color/white">
 
         <LinearLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"

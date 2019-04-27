@@ -7,7 +7,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
@@ -19,7 +22,9 @@ import com.squareup.picasso.Picasso;
 import com.ticketmaster.api.discovery.DiscoveryApi;
 import com.ticketmaster.api.discovery.operation.SearchEventsOperation;
 import com.ticketmaster.api.discovery.response.PagedResponse;
-import com.ticketmaster.discovery.model.*;
+import com.ticketmaster.discovery.model.Event;
+import com.ticketmaster.discovery.model.Events;
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,7 +37,9 @@ public class EventSearchActivity extends AppCompatActivity {
     private static final String tmApiKey = "WMqw4xi5StCjkwj6c1ifQnxlmVuBGxDw";
     private static final String TAG = "LOGTAG";
     private EditText citySearch;
-    private String city, keyword;
+    private String city;
+    private String keyword;
+    private String eventType;
     private DiscoveryApi discoveryApi;
     private TextView noResults;
     private ProgressDialog progDialog;
@@ -55,6 +62,7 @@ public class EventSearchActivity extends AppCompatActivity {
                 .placeholder(R.drawable.empty_profile)
                 .into(profile);
 
+        setUpEventTypeSpinner();
         db = App.Constants.database;
         tmEvents = new ArrayList<>();
         noResults = findViewById(R.id.noResultsMsg);
@@ -82,6 +90,32 @@ public class EventSearchActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) { return false; }
         });
+    }
+
+    private void setUpEventTypeSpinner() {
+        MaterialBetterSpinner spinner = findViewById(R.id.eventType);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.eventTypesArray, android.R.layout.simple_dropdown_item_1line);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (spinner.getText() != null &&
+                        spinner.getText().toString().equals("Event Type") ||
+                        spinner.getText().toString().equals("All")) {
+                    eventType = "";
+                } else {
+                    eventType = spinner.getText().toString();
+                }
+            }
+        } );
+        spinner.setAdapter(adapter);
     }
 
     private class Ticketmaster extends AsyncTask<Void, Void, List<Event>> {
@@ -129,7 +163,7 @@ public class EventSearchActivity extends AppCompatActivity {
             if (!events.isEmpty()) {
                 List<Event> results = new ArrayList<>();
                 for (Event e : events) {
-                    if (e.getClassifications().get(0).getSegment().getName().contains("Music")
+                    if (e.getClassifications().get(0).getSegment().getName().contains(eventType)
                             && results.size() < 4) {
                         results.add(e);
                     }

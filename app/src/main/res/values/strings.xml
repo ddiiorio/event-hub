@@ -54,5 +54,17 @@
     <string name="card_thumb">Event thumbnail image</string>
     <string name="tryAgain">TRY AGAIN</string>
     <string name="openUrl">View ticket details website</string>
+    <string name="eventType">Event Type</string>
+
+    <!-- Spinner values - event type -->
+    <string-array name="eventTypesArray">
+        <item>All</item>
+        <item>Music</item>
+        <item>Arts &amp; Theatre</item>
+        <item>Sports</item>
+        <item>Film</item>
+        <item>Family</item>
+        <item>Misc</item>
+    </string-array>
 
 </resources>
