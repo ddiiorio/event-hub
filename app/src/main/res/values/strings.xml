@@ -39,6 +39,9 @@
     <string name="imageURL">Event image URL</string>
     <string name="errorSignIn">Enter a value</string>
     <string name="noInternetMsg">Check your internet connection</string>
+    <string name="dbErrorMsg">We couldn\'t retrieve your events</string>
+    <string name="startsToday">Starts: TODAY!</string>
+    <string name="eventPassed">Passed</string>
 
     <!-- ImageView descriptions -->
     <string name="signInBgDescription">Sign in page background image</string>
@@ -49,5 +52,6 @@
     <string name="eventImageDesc">Event image</string>
     <string name="card_menu">Card menu</string>
     <string name="card_thumb">Event thumbnail image</string>
+    <string name="tryAgain">TRY AGAIN</string>
 
 </resources>

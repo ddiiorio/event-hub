@@ -11,4 +11,5 @@
     <color name="black">#000</color>
     <color name="white">#FFF</color>
     <color name="button">#009587</color>
+    <color name="buttonDark">#006D61</color>
 </resources>
