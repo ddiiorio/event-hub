@@ -88,9 +88,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         int x = (int) Math.round(days);
         if (x == 0) {
             holder.countdown.setTextColor(Color.RED);
-            holder.countdown.setText(String.valueOf("Starts: TODAY!!"));
+            holder.countdown.setText(R.string.startsToday);
         } else if (isNegative(days)) {
-            holder.countdown.setText(String.valueOf("Passed"));
+            holder.countdown.setText(R.string.eventPassed);
         } else {
             String dayDiff = "Starts: " + (x + 1) + " days";
             holder.countdown.setText(dayDiff);
@@ -102,6 +102,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
             viewEvent.putExtra("placeId", events.get(position).getPlaceId());
             viewEvent.putExtra("venueName", events.get(position).getVenueName());
             viewEvent.putExtra("venueAddress", events.get(position).getVenueAddress());
+            viewEvent.putExtra("ticketUrl", events.get(position).getUrl());
             v.getContext().startActivity(viewEvent);
         };
         holder.cardView.setOnClickListener(onClick);

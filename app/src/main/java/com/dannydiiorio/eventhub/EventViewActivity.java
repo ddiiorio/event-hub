@@ -23,6 +23,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
@@ -55,6 +56,7 @@ public class EventViewActivity extends AppCompatActivity {
     protected DatabaseReference dbUserEvents;
     private EditText newEventTitle, newEventThumb;
     protected SwipeRefreshLayout mSwipeRefreshLayout;
+    public FloatingActionMenu fabMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +66,7 @@ public class EventViewActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mSwipeRefreshLayout = findViewById(R.id.content);
+        fabMenu = findViewById(R.id.floatingMenu);
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             Intent intent = new Intent(this, SignInActivity.class);
@@ -85,13 +88,6 @@ public class EventViewActivity extends AppCompatActivity {
                     .into(profile);
 
             checkNetworkConnection(getApplicationContext());
-
-            // This method performs the actual data-refresh operation.
-            // The method calls setRefreshing(false) when it's finished.
-            mSwipeRefreshLayout.setOnRefreshListener(
-                    this::setupFirebaseEvents
-            );
-            setupFab();
 
             recyclerView = findViewById(R.id.recycler_view);
             RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
@@ -115,10 +111,18 @@ public class EventViewActivity extends AppCompatActivity {
                 activeNetwork.isConnectedOrConnecting();
         if (isConnected) {
             setupFirebaseEvents();
+            setupFab();
+            mSwipeRefreshLayout.setOnRefreshListener( this::setupFirebaseEvents );
         } else {
             mSwipeRefreshLayout.setRefreshing(false);
-            Snackbar.make(findViewById(R.id.eventContent),
-                    R.string.noInternetMsg, Snackbar.LENGTH_LONG).show();
+            fabMenu.setVisibility(View.INVISIBLE);
+            Snackbar networkSnack = Snackbar.make(findViewById(R.id.eventContent),
+                    R.string.noInternetMsg, Snackbar.LENGTH_INDEFINITE);
+            networkSnack.setAction(R.string.tryAgain, v -> {
+                checkNetworkConnection(getApplicationContext());
+                networkSnack.dismiss();
+            });
+            networkSnack.show();
         }
     }
 
@@ -149,22 +153,42 @@ public class EventViewActivity extends AppCompatActivity {
                 for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()) {
                     eventsUser.add(eventsAll.get(dataSnapshot1.getKey()));
                 }
-                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
-                    eventsUser.sort(new App.Constants.EventComparator());
+                if (eventsUser == null) {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    Snackbar dbErrorSnack = Snackbar.make(findViewById(R.id.eventContent),
+                            R.string.dbErrorMsg, Snackbar.LENGTH_INDEFINITE);
+                    dbErrorSnack.setAction(R.string.tryAgain, v -> {
+                        setupFirebaseEvents();
+                        dbErrorSnack.dismiss();
+                    });
+                    dbErrorSnack.show();
+                } else {
+                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                        eventsUser.sort(new App.Constants.EventComparator());
+                    }
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    myAdapter = new EventAdapter(EventViewActivity.this, eventsUser);
+                    recyclerView.setAdapter(myAdapter);
                 }
-                mSwipeRefreshLayout.setRefreshing(false);
-                myAdapter = new EventAdapter(EventViewActivity.this, eventsUser);
-                recyclerView.setAdapter(myAdapter);
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
-        }), 1500);
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Snackbar dbErrorSnack = Snackbar.make(findViewById(R.id.eventContent),
+                        R.string.dbErrorMsg, Snackbar.LENGTH_INDEFINITE);
+                dbErrorSnack.setAction(R.string.tryAgain, v -> {
+                    setupFirebaseEvents();
+                    dbErrorSnack.dismiss();
+                });
+                dbErrorSnack.show();
+            }
+        }), 1750);
 
     }
 
     protected void setupFab() {
-        final FloatingActionMenu fabMenu = findViewById(R.id.floatingMenu);
+        fabMenu.setVisibility(View.VISIBLE);
+        fabMenu.setClosedOnTouchOutside(true);
         FloatingActionButton fabQuickAdd = findViewById(R.id.fabQuickAdd);
         fabQuickAdd.setOnClickListener(view -> {
             fabMenu.close(true);
@@ -275,7 +299,9 @@ public class EventViewActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        myAdapter.notifyDataSetChanged();
+        if (myAdapter != null) {
+            myAdapter.notifyDataSetChanged();
+        }
     }
 
     private void logout() {

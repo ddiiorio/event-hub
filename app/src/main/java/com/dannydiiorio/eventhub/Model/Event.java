@@ -14,6 +14,7 @@ public class Event implements Serializable {
     private String eventDate;
     private long eventDateMillis;
     private boolean customEvent;
+    private String url;
 
     public Event() {  }
 
@@ -118,4 +119,13 @@ public class Event implements Serializable {
     public void setCustomEvent(boolean customEvent) {
         this.customEvent = customEvent;
     }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
 }
