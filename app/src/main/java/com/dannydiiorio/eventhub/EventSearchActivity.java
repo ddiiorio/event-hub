@@ -109,7 +109,7 @@ public class EventSearchActivity extends AppCompatActivity {
                 page = discoveryApi.searchEvents(new SearchEventsOperation()
                         .city(city)
                         .keyword(keyword)
-                        .pageSize(4)
+                        .pageSize(20)
                         .sort("date,asc")
                 );
             } catch (IOException e) {
@@ -127,14 +127,28 @@ public class EventSearchActivity extends AppCompatActivity {
                 progDialog = null;
             }
             if (!events.isEmpty()) {
-                if (recyclerView.getVisibility() != View.VISIBLE) {
-                    recyclerView.setVisibility(View.VISIBLE);
-                    noResults.setVisibility(LinearLayout.GONE);
+                List<Event> results = new ArrayList<>();
+                for (Event e : events) {
+                    if (e.getClassifications().get(0).getSegment().getName().contains("Music")
+                            && results.size() < 4) {
+                        results.add(e);
+                    }
                 }
-                RecyclerView.Adapter myAdapter =
-                        new EventSearchAdapter(EventSearchActivity.this, tmEvents);
-                recyclerView.setAdapter(myAdapter);
-                myAdapter.notifyDataSetChanged();
+                if (!results.isEmpty()) {
+                    if (recyclerView.getVisibility() != View.VISIBLE) {
+                        recyclerView.setVisibility(View.VISIBLE);
+                        noResults.setVisibility(LinearLayout.GONE);
+                    }
+                    RecyclerView.Adapter myAdapter =
+                            new EventSearchAdapter(EventSearchActivity.this, results);
+                    recyclerView.setAdapter(myAdapter);
+                    myAdapter.notifyDataSetChanged();
+                } else {
+                    if (recyclerView.getVisibility() != View.INVISIBLE) {
+                        recyclerView.setVisibility(View.GONE);
+                        noResults.setVisibility(LinearLayout.VISIBLE);
+                    }
+                }
             } else {
                 if (recyclerView.getVisibility() != View.INVISIBLE) {
                     recyclerView.setVisibility(View.GONE);
