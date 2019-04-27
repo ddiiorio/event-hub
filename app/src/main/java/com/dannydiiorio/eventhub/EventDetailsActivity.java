@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dannydiiorio.eventhub.Model.Event;
@@ -52,14 +53,17 @@ public class EventDetailsActivity extends AppCompatActivity {
     private TextView eventTitle;
     private TextView eventDate;
     private TextView openMapsText;
+    private TextView ticketUrlText;
     private ImageView eventImage, tmLogo;
     private Button deleteBtn;
     private String id = null;
+    private String ticketLink = null;
     private boolean isCustom;
     protected GeoDataClient mGeoDataClient;
     protected DatabaseReference db;
     protected Event current;
     protected int currentIndex;
+    private LinearLayout ticketUrl;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -85,6 +89,8 @@ public class EventDetailsActivity extends AppCompatActivity {
         eventVenue = findViewById(R.id.venueTxt);
         venueAddress = findViewById(R.id.venueAddress);
         openMapsText = findViewById(R.id.openMapsText);
+        ticketUrlText = findViewById(R.id.openTicketUrl);
+        ticketUrl = findViewById(R.id.ticketUrl);
         deleteBtn = findViewById(R.id.deleteBtn);
 
         db = App.Constants.database.child("events");
@@ -123,6 +129,11 @@ public class EventDetailsActivity extends AppCompatActivity {
                 if (intent.getStringExtra("venueAddress") != null) {
                     venueAddress.setText(intent.getStringExtra("venueAddress"));
                 }
+                if (intent.getStringExtra("ticketUrl") != null) {
+                    ticketLink = intent.getStringExtra("ticketUrl");
+                } else {
+                    ticketUrl.setVisibility(View.GONE);
+                }
             }
         }
     }
@@ -130,6 +141,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     private void setupListeners() {
         if (isCustom) {
             tmLogo.setVisibility(View.GONE);
+            ticketUrl.setVisibility(View.GONE);
             eventVenue.setOnClickListener(v -> {
                 LatLng neCorner = new LatLng(LAT, LON); //49.316054, -123.026416
                 LatLng swCorner = new LatLng(LAT-0.0976, LON-0.1888);
@@ -157,6 +169,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         }
 
         openMapsText.setOnClickListener(v -> launchGoogleMaps());
+        if (ticketUrl.getVisibility() == View.VISIBLE) {
+            ticketUrlText.setOnClickListener(v -> openTicketUrl());
+        }
         deleteBtn.setOnClickListener((View v) -> {
             AlertDialog.Builder builder =
                     new AlertDialog.Builder(v.getContext());
@@ -233,6 +248,12 @@ public class EventDetailsActivity extends AppCompatActivity {
     public void showDatePickerDialog(View v) {
         DatePickerFragment newFrag = new DatePickerFragment();
         newFrag.show(getSupportFragmentManager(), "datePicker");
+    }
+
+    public void openTicketUrl() {
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(ticketLink));
+        startActivity(i);
     }
 
     @Override

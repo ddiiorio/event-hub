@@ -78,9 +78,7 @@ public class EventSearchAdapter extends RecyclerView.Adapter<EventSearchAdapter.
                     event.getDates().getStart().getLocalDate());
             holder.resultDate.setText(App.Constants.df.format(date));
 
-            onClick = v -> {
-                addEventDialog(event);
-            };
+            onClick = v -> addEventDialog(event);
             holder.result.setOnClickListener(onClick);
         }
     }
@@ -103,6 +101,7 @@ public class EventSearchAdapter extends RecyclerView.Adapter<EventSearchAdapter.
             event.setImgUrl(e.getImages().get(0).getUrl());
             event.setVenueName(e.getVenues().get(0).getName());
             event.setEventDateMillis(eventDate.getTime());
+            event.setUrl(e.getUrl());
             String addy1 = e.getVenues().get(0).getAddress().getLine1();
             String addy2 = e.getVenues().get(0).getAddress().getLine2();
             if (addy2 != null) {

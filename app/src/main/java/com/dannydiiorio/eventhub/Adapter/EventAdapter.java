@@ -102,6 +102,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
             viewEvent.putExtra("placeId", events.get(position).getPlaceId());
             viewEvent.putExtra("venueName", events.get(position).getVenueName());
             viewEvent.putExtra("venueAddress", events.get(position).getVenueAddress());
+            viewEvent.putExtra("ticketUrl", events.get(position).getUrl());
             v.getContext().startActivity(viewEvent);
         };
         holder.cardView.setOnClickListener(onClick);
