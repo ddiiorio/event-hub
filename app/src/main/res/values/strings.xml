@@ -55,6 +55,7 @@
     <string name="tryAgain">TRY AGAIN</string>
     <string name="openUrl">View ticket details website</string>
     <string name="eventType">Event Type</string>
+    <string name="chooseType">Select an event type</string>
 
     <!-- Spinner values - event type -->
     <string-array name="eventTypesArray">

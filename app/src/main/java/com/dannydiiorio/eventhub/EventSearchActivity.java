@@ -3,6 +3,7 @@ package com.dannydiiorio.eventhub;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -79,12 +80,19 @@ public class EventSearchActivity extends AppCompatActivity {
         keywordSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                keyword = query;
-                city = (!citySearch.getText().toString().equals(""))
-                        ? citySearch.getText().toString() : "Vancouver";
-                new Ticketmaster().execute();
-                keywordSearch.clearFocus();
-                return true;
+                if (eventType == null) {
+                    String typeMsg = getResources().getString(R.string.chooseType);
+                    Snackbar.make(findViewById(android.R.id.content),
+                            typeMsg, Snackbar.LENGTH_LONG).show();
+                    return false;
+                } else {
+                    keyword = query;
+                    city = (!citySearch.getText().toString().equals(""))
+                            ? citySearch.getText().toString() : "Vancouver";
+                    new Ticketmaster().execute();
+                    keywordSearch.clearFocus();
+                    return true;
+                }
             }
 
             @Override
@@ -106,9 +114,7 @@ public class EventSearchActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (spinner.getText() != null &&
-                        spinner.getText().toString().equals("Event Type") ||
-                        spinner.getText().toString().equals("All")) {
+                if (spinner.getText().toString().equals("All")) {
                     eventType = "";
                 } else {
                     eventType = spinner.getText().toString();
@@ -143,7 +149,7 @@ public class EventSearchActivity extends AppCompatActivity {
                 page = discoveryApi.searchEvents(new SearchEventsOperation()
                         .city(city)
                         .keyword(keyword)
-                        .pageSize(20)
+                        .pageSize(12)
                         .sort("date,asc")
                 );
             } catch (IOException e) {
@@ -162,9 +168,11 @@ public class EventSearchActivity extends AppCompatActivity {
             }
             if (!events.isEmpty()) {
                 List<Event> results = new ArrayList<>();
+                if (eventType.equals("")) {
+                    results = events;
+                }
                 for (Event e : events) {
-                    if (e.getClassifications().get(0).getSegment().getName().contains(eventType)
-                            && results.size() < 4) {
+                    if (e.getClassifications().get(0).getSegment().getName().contains(eventType)) {
                         results.add(e);
                     }
                 }
