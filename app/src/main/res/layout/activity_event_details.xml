@@ -219,7 +219,7 @@
                 android:layout_marginStart="@dimen/search_margin"
                 android:src="@drawable/ticketmaster_blue_png" />
 
-            <Button
+            <android.support.v7.widget.AppCompatButton
                 android:id="@+id/deleteBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="35dp"
@@ -231,7 +231,8 @@
                 android:padding="@dimen/search_margin"
                 android:text="@string/deleteEventTitle"
                 android:textSize="12sp"
-                android:textColor="@android:color/holo_red_light" />
+                android:textColor="@android:color/holo_red_light"
+                android:foreground="?android:attr/selectableItemBackground"/>
 
         </RelativeLayout>
         </LinearLayout>

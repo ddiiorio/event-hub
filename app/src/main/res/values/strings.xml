@@ -7,7 +7,7 @@
     <string name="dateBtn">Add Date</string>
     <string name="addEventBlurb">After adding the event, tap on it to add more details!</string>
     <string name="newEventBtn"> SAVE EVENT</string>
-    <string name="newEventError">New event must contain a title</string>
+    <string name="newEventError">New event must have a title</string>
     <string name="signIn">Sign In</string>
     <string name="signOut">Sign Out</string>
     <string name="username">Username</string>
@@ -56,6 +56,7 @@
     <string name="openUrl">View ticket details website</string>
     <string name="eventType">Event Type</string>
     <string name="chooseType">Select an event type</string>
+    <string name="eventTomorrow">Starts: 1 day</string>
 
     <!-- Spinner values - event type -->
     <string-array name="eventTypesArray">
