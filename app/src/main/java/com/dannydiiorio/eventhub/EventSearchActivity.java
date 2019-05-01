@@ -114,11 +114,7 @@ public class EventSearchActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (spinner.getText().toString().equals("All")) {
-                    eventType = "";
-                } else {
-                    eventType = spinner.getText().toString();
-                }
+                eventType = spinner.getText().toString();
             }
         } );
         spinner.setAdapter(adapter);
@@ -168,12 +164,13 @@ public class EventSearchActivity extends AppCompatActivity {
             }
             if (!events.isEmpty()) {
                 List<Event> results = new ArrayList<>();
-                if (eventType.equals("")) {
+                if (eventType.equals("All")) {
                     results = events;
-                }
-                for (Event e : events) {
-                    if (e.getClassifications().get(0).getSegment().getName().contains(eventType)) {
-                        results.add(e);
+                } else {
+                    for (Event e : events) {
+                        if (e.getClassifications().get(0).getSegment().getName().contains(eventType)) {
+                            results.add(e);
+                        }
                     }
                 }
                 if (!results.isEmpty()) {

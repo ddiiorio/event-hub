@@ -24,7 +24,7 @@
     <string name="tomorrow">TOMORROW</string>
     <string name="searchEventText">Search Ticketmaster for an event</string>
     <string name="searchResults">Tap result to add to your Event Hub:</string>
-    <string name="enterCity">Enter a city</string>
+    <string name="enterCity">City</string>
     <string name="searchHint">Enter a keyword</string>
     <string name="eventDetails">Event Details:</string>
     <string name="noResultMsg">No results!</string>

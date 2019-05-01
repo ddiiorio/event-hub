@@ -60,20 +60,33 @@
         android:paddingEnd="@dimen/search_margin"
         android:paddingStart="@dimen/card_margin">
 
-        <EditText
-            android:id="@+id/citySearch"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="5"
-            android:maxLines="1"
-            android:maxLength="30"
-            android:lines="1"
-            android:singleLine="true"
-            android:inputType="textCapWords"
-            android:hint="@string/enterCity"
-            android:textColor="@color/black"
-            android:paddingRight="@dimen/search_margin"
-            android:layout_gravity="bottom"/>
+            android:layout_gravity="bottom"
+            android:orientation="vertical">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/labelCity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/citySearch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:maxLength="30"
+                    android:lines="1"
+                    android:singleLine="true"
+                    android:inputType="textCapWords"
+                    android:hint="@string/enterCity"
+                    android:textColor="@color/black"
+                    android:paddingRight="@dimen/search_margin"
+                    android:layout_gravity="bottom"/>
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
 
         <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
             android:id="@+id/eventType"
