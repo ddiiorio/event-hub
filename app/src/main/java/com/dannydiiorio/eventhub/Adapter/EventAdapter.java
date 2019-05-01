@@ -11,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,14 +86,16 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         Date endDate = App.Constants.parseFirebaseDate(event.getEventDate());
         long diff = endDate.getTime() - System.currentTimeMillis();
         double days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-        int x = (int) Math.round(days);
-        if (x == 0) {
+        int daysUntilEvent = (int) Math.round(days);
+        if (DateUtils.isToday(endDate.getTime())) {
             holder.countdown.setTextColor(Color.RED);
             holder.countdown.setText(R.string.startsToday);
         } else if (isNegative(days)) {
             holder.countdown.setText(R.string.eventPassed);
+        } else if (daysUntilEvent == 0) {
+            holder.countdown.setText(R.string.eventTomorrow);
         } else {
-            String dayDiff = "Starts: " + (x + 1) + " days";
+            String dayDiff = "Starts: " + (daysUntilEvent + 1) + " days";
             holder.countdown.setText(dayDiff);
         }
 

@@ -8,7 +8,8 @@
     android:layout_gravity="start"
     android:layout_margin="@dimen/card_margin"
     android:elevation="3dp"
-    card_view:cardCornerRadius="@dimen/card_event_radius">
+    card_view:cardCornerRadius="@dimen/card_event_radius"
+    android:foreground="?android:attr/selectableItemBackground">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -21,7 +22,8 @@
             android:focusable="true"
             android:clickable="true"
             android:scaleType="fitXY"
-            android:contentDescription="@string/card_thumb" />
+            android:contentDescription="@string/card_thumb"
+            android:foreground="?android:attr/selectableItemBackground"/>
 
         <LinearLayout
             android:id="@+id/titleAndCount"
@@ -63,6 +65,7 @@
                 android:layout_weight="5"
                 android:paddingTop="@dimen/event_title_padding"
                 android:textSize="@dimen/event_date"
+                android:breakStrategy="simple"
                 android:gravity="center_horizontal"/>
 
             <LinearLayout
