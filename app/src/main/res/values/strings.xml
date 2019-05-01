@@ -24,7 +24,7 @@
     <string name="tomorrow">TOMORROW</string>
     <string name="searchEventText">Search Ticketmaster for an event</string>
     <string name="searchResults">Tap result to add to your Event Hub:</string>
-    <string name="enterCity">Enter a city</string>
+    <string name="enterCity">City</string>
     <string name="searchHint">Enter a keyword</string>
     <string name="eventDetails">Event Details:</string>
     <string name="noResultMsg">No results!</string>
@@ -54,5 +54,18 @@
     <string name="card_thumb">Event thumbnail image</string>
     <string name="tryAgain">TRY AGAIN</string>
     <string name="openUrl">View ticket details website</string>
+    <string name="eventType">Event Type</string>
+    <string name="chooseType">Select an event type</string>
+
+    <!-- Spinner values - event type -->
+    <string-array name="eventTypesArray">
+        <item>All</item>
+        <item>Music</item>
+        <item>Arts &amp; Theatre</item>
+        <item>Sports</item>
+        <item>Film</item>
+        <item>Family</item>
+        <item>Misc</item>
+    </string-array>
 
 </resources>

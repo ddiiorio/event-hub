@@ -16,6 +16,7 @@ import com.dannydiiorio.eventhub.App;
 import com.dannydiiorio.eventhub.EventSearchActivity;
 import com.dannydiiorio.eventhub.R;
 import com.google.firebase.database.DatabaseReference;
+import com.ticketmaster.discovery.model.Classification;
 import com.ticketmaster.discovery.model.Event;
 import com.ticketmaster.discovery.model.Venue;
 
@@ -77,6 +78,7 @@ public class EventSearchAdapter extends RecyclerView.Adapter<EventSearchAdapter.
             java.util.Date date = App.Constants.parseDate(
                     event.getDates().getStart().getLocalDate());
             holder.resultDate.setText(App.Constants.df.format(date));
+            List<Classification> c = event.getClassifications();
 
             onClick = v -> addEventDialog(event);
             holder.result.setOnClickListener(onClick);
