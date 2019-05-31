@@ -241,7 +241,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         eventsUser.set(currentIndex, current);
         eventsAll.put(id, current);
         Map<String, Object> update = new HashMap<>();
-        update.put(current.getId(), current);
+        update.put(id, current);
         db.updateChildren(update);
     }
 

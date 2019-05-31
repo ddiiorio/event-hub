@@ -40,6 +40,7 @@
     <string name="errorSignIn">Enter a value</string>
     <string name="noInternetMsg">Check your internet connection</string>
     <string name="dbErrorMsg">We couldn\'t retrieve your events</string>
+    <string name="noEventsMsg">No events! Add one below…</string>
     <string name="startsToday">Starts: TODAY!</string>
     <string name="eventPassed">Passed</string>
 
