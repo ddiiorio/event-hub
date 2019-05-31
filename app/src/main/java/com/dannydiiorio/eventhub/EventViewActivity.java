@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.dannydiiorio.eventhub.Adapter.EventAdapter;
 import com.dannydiiorio.eventhub.Model.Event;
@@ -42,11 +43,12 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.dannydiiorio.eventhub.App.Constants.eventsAll;
 import static com.dannydiiorio.eventhub.App.Constants.eventsUser;
+import static com.dannydiiorio.eventhub.App.Constants.eventsAll;
 
 public class EventViewActivity extends AppCompatActivity {
     private static final String TAG = "LOGTAG";
@@ -57,6 +59,7 @@ public class EventViewActivity extends AppCompatActivity {
     private EditText newEventTitle, newEventThumb;
     protected SwipeRefreshLayout mSwipeRefreshLayout;
     public FloatingActionMenu fabMenu;
+    protected List<String> userEventIds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,35 +129,77 @@ public class EventViewActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Retrieve user's events from FireBase and apply to recyclerview
+     */
     private void setupFirebaseEvents() {
         mSwipeRefreshLayout.setRefreshing(true);
         dbEvents = App.Constants.database.child("events");
-        Query dataQuery = dbEvents.orderByChild("eventDateMillis");
         dbUserEvents = App.Constants.database.child("users/")
                 .child(App.Constants.currentUser.getUid()).child("events");
 
-        dataQuery.addValueEventListener(new ValueEventListener() {
+        //get all event IDs that user has added to their event hub
+        dbUserEvents.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                userEventIds = new ArrayList<>();
                 for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()) {
-                    Event event = dataSnapshot1.getValue(Event.class);
-                    eventsAll.put(event.getId(), event);
+                    userEventIds.add(dataSnapshot1.getKey());
                 }
+
+                new Handler().postDelayed(() -> populateEventList(), 450);
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
+    }
 
-        new Handler().postDelayed(() -> dbUserEvents.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                eventsUser = new ArrayList<>();
-                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()) {
-                    eventsUser.add(eventsAll.get(dataSnapshot1.getKey()));
+    /**
+     * Populate arraylist with events that user has saved, and set to recyclerview
+     * If none exist, show message to user
+     */
+    private void populateEventList() {
+        TextView emptyEventList = findViewById(R.id.noEventsMsg);
+        Query dataQuery = dbEvents.orderByChild("eventDateMillis");
+        if (!userEventIds.isEmpty()) {
+            Log.w(TAG, "events exist");
+            emptyEventList.setVisibility(View.GONE);
+            dataQuery.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                        if (userEventIds.contains(dataSnapshot1.getKey())) {
+                            Event event = dataSnapshot1.getValue(Event.class);
+                            if (!eventsUser.contains(event)) {
+                                eventsAll.put(event.getId(), event);
+                                eventsUser.add(event);
+                            }
+                        }
+                    }
+
+                    if (eventsUser == null || eventsUser.get(0) == null) {
+                        Log.w(TAG, "event list null");
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        Snackbar dbErrorSnack = Snackbar.make(findViewById(R.id.eventContent),
+                                R.string.dbErrorMsg, Snackbar.LENGTH_INDEFINITE);
+                        dbErrorSnack.setAction(R.string.tryAgain, v -> {
+                            setupFirebaseEvents();
+                            dbErrorSnack.dismiss();
+                        });
+                        dbErrorSnack.show();
+                    } else {
+                        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            eventsUser.sort(new App.Constants.EventComparator());
+                        }
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        myAdapter = new EventAdapter(EventViewActivity.this, eventsUser);
+                        recyclerView.setAdapter(myAdapter);
+                    }
                 }
-                if (eventsUser == null) {
-                    mSwipeRefreshLayout.setRefreshing(false);
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
                     Snackbar dbErrorSnack = Snackbar.make(findViewById(R.id.eventContent),
                             R.string.dbErrorMsg, Snackbar.LENGTH_INDEFINITE);
                     dbErrorSnack.setAction(R.string.tryAgain, v -> {
@@ -162,30 +207,21 @@ public class EventViewActivity extends AppCompatActivity {
                         dbErrorSnack.dismiss();
                     });
                     dbErrorSnack.show();
-                } else {
-                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
-                        eventsUser.sort(new App.Constants.EventComparator());
-                    }
-                    mSwipeRefreshLayout.setRefreshing(false);
-                    myAdapter = new EventAdapter(EventViewActivity.this, eventsUser);
-                    recyclerView.setAdapter(myAdapter);
                 }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Snackbar dbErrorSnack = Snackbar.make(findViewById(R.id.eventContent),
-                        R.string.dbErrorMsg, Snackbar.LENGTH_INDEFINITE);
-                dbErrorSnack.setAction(R.string.tryAgain, v -> {
-                    setupFirebaseEvents();
-                    dbErrorSnack.dismiss();
-                });
-                dbErrorSnack.show();
-            }
-        }), 1750);
-
+            });
+        } else {
+            Log.w(TAG, "empty event list");
+            eventsUser.clear();
+            mSwipeRefreshLayout.setRefreshing(false);
+            emptyEventList.setVisibility(View.VISIBLE);
+            myAdapter = new EventAdapter(EventViewActivity.this, eventsUser);
+            recyclerView.setAdapter(myAdapter);
+        }
     }
 
+    /**
+     * Set up floating action button with listeners
+     */
     protected void setupFab() {
         fabMenu.setVisibility(View.VISIBLE);
         fabMenu.setClosedOnTouchOutside(true);
@@ -259,6 +295,7 @@ public class EventViewActivity extends AppCompatActivity {
                 dbEvents.child(event.getId()).setValue(event);
                 dbUserEvents.child(event.getId()).setValue(true);
                 dialog.dismiss();
+                myAdapter.notifyDataSetChanged();
                 String eventAddConfirm = getResources().getString(R.string.eventAddConfirm);
                 Snackbar.make(findViewById(android.R.id.content),
                         eventAddConfirm, Snackbar.LENGTH_LONG).show();
@@ -299,6 +336,14 @@ public class EventViewActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        if (myAdapter != null) {
+            myAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         if (myAdapter != null) {
             myAdapter.notifyDataSetChanged();
         }

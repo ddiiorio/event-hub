@@ -16,6 +16,11 @@ public class ImageHelper {
         images.add("https://firebasestorage.googleapis.com/v0/b/eventhub-208222.appspot.com/o/placeholders%2Fgeneral%2Fp3.png?alt=media&token=9abd7bca-a919-4db9-a870-f1c80e9fec6b");
     }
 
+    /**
+     * Custom events that users do not add an image to will be assigned a random placeholder
+     * image from storage above
+     * @return image url
+     */
     public static String getRandomPlaceholder() {
         Random rand = new Random();
         return images.get(rand.nextInt(images.size()));

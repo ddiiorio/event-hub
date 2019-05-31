@@ -99,4 +99,15 @@
 
         </com.github.clans.fab.FloatingActionMenu>
     </FrameLayout>
+
+    <TextView
+        android:id="@+id/noEventsMsg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textColor="@color/event_title"
+        android:textSize="18sp"
+        android:text="@string/noEventsMsg"
+        android:visibility="gone"/>
 </android.support.design.widget.CoordinatorLayout>

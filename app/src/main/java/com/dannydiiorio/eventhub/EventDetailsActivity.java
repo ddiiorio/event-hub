@@ -138,6 +138,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * If event is custom, aka not from Ticketmaster, user can edit venue and date
+     */
     private void setupListeners() {
         if (isCustom) {
             tmLogo.setVisibility(View.GONE);
@@ -187,7 +190,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
             builder.setPositiveButton((R.string.remove),
                     (dialog, which) -> {
-                        //code to delete event
+                        //delete event
                         App.Constants.removeEvent(id);
                         dialog.dismiss();
                         finish();
@@ -241,7 +244,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         eventsUser.set(currentIndex, current);
         eventsAll.put(id, current);
         Map<String, Object> update = new HashMap<>();
-        update.put(current.getId(), current);
+        update.put(id, current);
         db.updateChildren(update);
     }
 
