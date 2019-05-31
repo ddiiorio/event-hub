@@ -14,5 +14,5 @@
 
 ### screen shots
 
-![Screenshot1](https://github.com/ddiiorio/event-hub/blob/master/app/src/screens1.jpg)
-![Screenshot1](https://github.com/ddiiorio/event-hub/blob/master/app/src/screens2.jpg)
+![Screenshot1](https://github.com/ddiiorio/event-hub/blob/master/app/src/screens1.png)
+![Screenshot1](https://github.com/ddiiorio/event-hub/blob/master/app/src/screens2.png)
