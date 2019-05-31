@@ -132,7 +132,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
                             vibe.vibrate(50);
                         }
 
-                        //not removing items if cancel is done
+                        //do not remove item if cancel is done
                         builder.setPositiveButton((R.string.remove),
                                 (dialog, which) -> {
                                     //code to delete event

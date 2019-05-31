@@ -52,9 +52,10 @@ public class App extends Application {
             }
         }
 
-        public static void removeEvent(String s) {
+        public static void removeEvent(String eventId) {
             database.child("users/").child(currentUser.getUid()).child("events")
-                    .child(s).removeValue();
+                    .child(eventId).removeValue();
+            eventsUser.remove(eventsAll.get(eventId));
         }
 
         public static class EventComparator implements Comparator<Event> {

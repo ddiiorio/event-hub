@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.dannydiiorio.eventhub.Adapter.EventAdapter;
 import com.dannydiiorio.eventhub.Model.Event;
@@ -131,22 +132,8 @@ public class EventViewActivity extends AppCompatActivity {
     private void setupFirebaseEvents() {
         mSwipeRefreshLayout.setRefreshing(true);
         dbEvents = App.Constants.database.child("events");
-//        Query dataQuery = dbEvents.orderByChild("eventDateMillis");
         dbUserEvents = App.Constants.database.child("users/")
                 .child(App.Constants.currentUser.getUid()).child("events");
-
-//        dataQuery.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()) {
-//                    Event event = dataSnapshot1.getValue(Event.class);
-//                    eventsAll.put(event.getId(), event);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {}
-//        });
 
         dbUserEvents.addValueEventListener(new ValueEventListener() {
             @Override
@@ -162,60 +149,24 @@ public class EventViewActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
-
-//        new Handler().postDelayed(() -> dbUserEvents.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                eventsUser = new ArrayList<>();
-//                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()) {
-//                    eventsUser.add(eventsAll.get(dataSnapshot1.getKey()));
-//                }
-//                if (eventsUser == null || eventsUser.get(0) == null) {
-//                    mSwipeRefreshLayout.setRefreshing(false);
-//                    Snackbar dbErrorSnack = Snackbar.make(findViewById(R.id.eventContent),
-//                            R.string.dbErrorMsg, Snackbar.LENGTH_INDEFINITE);
-//                    dbErrorSnack.setAction(R.string.tryAgain, v -> {
-//                        setupFirebaseEvents();
-//                        dbErrorSnack.dismiss();
-//                    });
-//                    dbErrorSnack.show();
-//                } else {
-//                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
-//                        eventsUser.sort(new App.Constants.EventComparator());
-//                    }
-//                    mSwipeRefreshLayout.setRefreshing(false);
-//                    myAdapter = new EventAdapter(EventViewActivity.this, eventsUser);
-//                    recyclerView.setAdapter(myAdapter);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                Snackbar dbErrorSnack = Snackbar.make(findViewById(R.id.eventContent),
-//                        R.string.dbErrorMsg, Snackbar.LENGTH_INDEFINITE);
-//                dbErrorSnack.setAction(R.string.tryAgain, v -> {
-//                    setupFirebaseEvents();
-//                    dbErrorSnack.dismiss();
-//                });
-//                dbErrorSnack.show();
-//            }
-//        }), 1750);
-
     }
 
     private void populateEventList() {
+        TextView emptyEventList = findViewById(R.id.noEventsMsg);
         Query dataQuery = dbEvents.orderByChild("eventDateMillis");
-        eventsUser = new ArrayList<>();
         if (!userEventIds.isEmpty()) {
             Log.w(TAG, "events exist");
+            emptyEventList.setVisibility(View.GONE);
             dataQuery.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                         if (userEventIds.contains(dataSnapshot1.getKey())) {
                             Event event = dataSnapshot1.getValue(Event.class);
-                            eventsAll.put(event.getId(), event);
-                            eventsUser.add(event);
+                            if (!eventsUser.contains(event)) {
+                                eventsAll.put(event.getId(), event);
+                                eventsUser.add(event);
+                            }
                         }
                     }
 
@@ -254,6 +205,7 @@ public class EventViewActivity extends AppCompatActivity {
             Log.w(TAG, "empty event list");
             eventsUser.clear();
             mSwipeRefreshLayout.setRefreshing(false);
+            emptyEventList.setVisibility(View.VISIBLE);
             myAdapter = new EventAdapter(EventViewActivity.this, eventsUser);
             recyclerView.setAdapter(myAdapter);
         }

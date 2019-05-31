@@ -155,7 +155,7 @@ public class EventSearchActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             tmEvents = (page != null && page.getContent() != null)
-                    ? page.getContent().getEvents() : Collections.<Event>emptyList();
+                    ? page.getContent().getEvents() : Collections.emptyList();
             return tmEvents;
         }
 
