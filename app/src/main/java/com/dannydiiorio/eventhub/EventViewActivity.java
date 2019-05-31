@@ -129,12 +129,16 @@ public class EventViewActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Retrieve user's events from FireBase and apply to recyclerview
+     */
     private void setupFirebaseEvents() {
         mSwipeRefreshLayout.setRefreshing(true);
         dbEvents = App.Constants.database.child("events");
         dbUserEvents = App.Constants.database.child("users/")
                 .child(App.Constants.currentUser.getUid()).child("events");
 
+        //get all event IDs that user has added to their event hub
         dbUserEvents.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -151,6 +155,10 @@ public class EventViewActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Populate arraylist with events that user has saved, and set to recyclerview
+     * If none exist, show message to user
+     */
     private void populateEventList() {
         TextView emptyEventList = findViewById(R.id.noEventsMsg);
         Query dataQuery = dbEvents.orderByChild("eventDateMillis");
@@ -211,6 +219,9 @@ public class EventViewActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Set up floating action button with listeners
+     */
     protected void setupFab() {
         fabMenu.setVisibility(View.VISIBLE);
         fabMenu.setClosedOnTouchOutside(true);

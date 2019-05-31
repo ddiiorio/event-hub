@@ -170,6 +170,7 @@ public class EventSearchActivity extends AppCompatActivity {
                 if (eventType.equals("All")) {
                     results = events;
                 } else {
+                    //filter results to only show ones that match event type from spinner
                     for (Event e : events) {
                         if (e.getClassifications().get(0).getSegment().getName().contains(eventType)) {
                             results.add(e);
