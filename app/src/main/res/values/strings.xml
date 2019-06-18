@@ -35,6 +35,7 @@
     <string name="mapsError">Select a venue first</string>
     <string name="dateConfirm">Date saved successfully</string>
     <string name="venueConfirm">Venue save successfully</string>
+    <string name="venueError">Error saving venue, try again</string>
     <string name="eventAddConfirm">Event saved successfully</string>
     <string name="imageURL">Event image URL</string>
     <string name="errorSignIn">Enter a value</string>

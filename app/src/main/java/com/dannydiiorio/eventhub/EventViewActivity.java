@@ -25,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -47,8 +48,8 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.dannydiiorio.eventhub.App.Constants.eventsUser;
 import static com.dannydiiorio.eventhub.App.Constants.eventsAll;
+import static com.dannydiiorio.eventhub.App.Constants.eventsUser;
 
 public class EventViewActivity extends AppCompatActivity {
     private static final String TAG = "LOGTAG";
@@ -271,7 +272,6 @@ public class EventViewActivity extends AppCompatActivity {
         Button newEventBtn = dialog.findViewById(R.id.newEventBtn);
         newEventTitle = dialog.findViewById(R.id.newEventTitle);
         newEventThumb = dialog.findViewById(R.id.newEventThumb);
-        newEventTitle.requestFocus();
 
         newEventBtn.setOnClickListener(v -> {
             String errorMsg = getResources().getString(R.string.newEventError);
@@ -304,6 +304,8 @@ public class EventViewActivity extends AppCompatActivity {
                         errorMsg, Snackbar.LENGTH_LONG).show();
             }
         });
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        newEventTitle.requestFocus();
         dialog.show();
         Window window = dialog.getWindow();
         window.setLayout(GridLayoutManager.LayoutParams.MATCH_PARENT,
