@@ -9,14 +9,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dannydiiorio.eventhub.App;
 import com.dannydiiorio.eventhub.EventSearchActivity;
+import com.dannydiiorio.eventhub.ImageHelper;
 import com.dannydiiorio.eventhub.R;
 import com.google.firebase.database.DatabaseReference;
-import com.ticketmaster.discovery.model.Classification;
 import com.ticketmaster.discovery.model.Event;
 import com.ticketmaster.discovery.model.Venue;
 
@@ -38,6 +39,7 @@ public class EventSearchAdapter extends RecyclerView.Adapter<EventSearchAdapter.
         TextView resultTitle;
         TextView resultVenue;
         TextView resultDate;
+        ImageView resultImage;
         LinearLayout result;
 
         ViewHolder(View v) {
@@ -45,6 +47,7 @@ public class EventSearchAdapter extends RecyclerView.Adapter<EventSearchAdapter.
             resultTitle = v.findViewById(R.id.resultTitle);
             resultVenue = v.findViewById(R.id.resultVenue);
             resultDate = v.findViewById(R.id.resultDate);
+            resultImage = v.findViewById(R.id.resultImage);
             result = v.findViewById(R.id.searchResult);
         }
     }
@@ -60,8 +63,7 @@ public class EventSearchAdapter extends RecyclerView.Adapter<EventSearchAdapter.
     public EventSearchAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LinearLayout v = (LinearLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.search_result, parent, false);
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
+        return new ViewHolder(v);
     }
 
     @Override
@@ -78,10 +80,11 @@ public class EventSearchAdapter extends RecyclerView.Adapter<EventSearchAdapter.
             java.util.Date date = App.Constants.parseDate(
                     event.getDates().getStart().getLocalDate());
             holder.resultDate.setText(App.Constants.df.format(date));
-            List<Classification> c = event.getClassifications();
+            ImageHelper.loadImage(event.getImages().get(0).getUrl(), holder.resultImage);
 
             onClick = v -> addEventDialog(event);
             holder.result.setOnClickListener(onClick);
+            holder.resultImage.setOnClickListener(onClick);
         }
     }
 
