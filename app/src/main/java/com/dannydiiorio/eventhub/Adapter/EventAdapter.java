@@ -118,34 +118,32 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
             popup.inflate(R.menu.menu_event);
             //adding click listener
             popup.setOnMenuItemClickListener(item -> {
-                switch (item.getItemId()) {
-                    case R.id.removeEvent:
-                        AlertDialog.Builder builder =
-                                new AlertDialog.Builder(v.getContext());
-                        builder.setMessage(R.string.deleteDialog);
-                        builder.setTitle(R.string.deleteEventTitle);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            vibe.vibrate(VibrationEffect.createOneShot(50,
-                                    VibrationEffect.DEFAULT_AMPLITUDE));
-                        } else {
-                            //deprecated in API 26
-                            vibe.vibrate(50);
-                        }
+                if (item.getItemId() == R.id.removeEvent) {
+                    AlertDialog.Builder builder =
+                            new AlertDialog.Builder(v.getContext());
+                    builder.setMessage(R.string.deleteDialog);
+                    builder.setTitle(R.string.deleteEventTitle);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        vibe.vibrate(VibrationEffect.createOneShot(50,
+                                VibrationEffect.DEFAULT_AMPLITUDE));
+                    } else {
+                        //deprecated in API 26
+                        vibe.vibrate(50);
+                    }
 
-                        //do not remove item if cancel is done
-                        builder.setPositiveButton((R.string.remove),
-                                (dialog, which) -> {
-                                    //code to delete event
-                                    App.Constants.removeEvent(events.get(position).getId());
-                                    dialog.dismiss();
-                                    Snackbar.make(((EventViewActivity)context).findViewById(R.id.eventContent),
-                                            R.string.removed, Snackbar.LENGTH_LONG).show();
-                                }).setNegativeButton((android.R.string.cancel),
-                                (dialog, which) -> dialog.dismiss()).show();
-                        return true;
-                    default:
-                        return false;
+                    //do not remove item if cancel is done
+                    builder.setPositiveButton((R.string.remove),
+                            (dialog, which) -> {
+                                //code to delete event
+                                App.Constants.removeEvent(events.get(position).getId());
+                                dialog.dismiss();
+                                Snackbar.make(((EventViewActivity) context).findViewById(R.id.eventContent),
+                                        R.string.removed, Snackbar.LENGTH_LONG).show();
+                            }).setNegativeButton((android.R.string.cancel),
+                            (dialog, which) -> dialog.dismiss()).show();
+                    return true;
                 }
+                return false;
             });
             //displaying the popup
             popup.show();

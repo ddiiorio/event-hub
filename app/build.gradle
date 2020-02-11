@@ -6,8 +6,8 @@ android {
         applicationId "com.dannydiiorio.eventhub"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 7
-        versionName "2.2.1"
+        versionCode 8
+        versionName "2.2.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -15,7 +15,6 @@ android {
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            resValue "string", "google_api_key", "AIzaSyB4e_RlvXsSYsRoK9kZv8B9oNtT5thsMA4"
         }
     }
     buildToolsVersion '28.0.3'
